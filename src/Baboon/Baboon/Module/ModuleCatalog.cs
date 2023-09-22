@@ -11,13 +11,15 @@ namespace Baboon
     {
         private readonly IContainer m_container;
         private readonly BaboonApplication m_application;
+        private readonly IConfigService m_config;
         private readonly object m_locker = new object();
         private readonly Dictionary<string, AppModuleInfo> m_modules = new Dictionary<string, AppModuleInfo>();
 
-        public ModuleCatalog(IContainer container, BaboonApplication application)
+        public ModuleCatalog(IContainer container, BaboonApplication application, IConfigService config)
         {
             this.m_container = container;
             this.m_application = application;
+            this.m_config = config;
         }
 
         public void Add(Type moduleType)
@@ -120,7 +122,7 @@ namespace Baboon
             lock (this.m_locker)
             {
                 var count = 0;
-                foreach (var item in Directory.GetFiles(ConstUtility.Path_Dir_Plugins, "Description.xml", SearchOption.AllDirectories))
+                foreach (var item in Directory.GetFiles(m_config.GetPathDirPlugins(), "Description.xml", SearchOption.AllDirectories))
                 {
                     var descriptionBuilder = ModuleDescriptionBuilder.CreateByFile(item);
                     if (this.TryGetAppModuleInfo(descriptionBuilder.Description.Id, out var appModuleInfo))

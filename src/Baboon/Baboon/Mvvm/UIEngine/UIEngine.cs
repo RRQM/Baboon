@@ -16,6 +16,7 @@ namespace Baboon.Mvvm
         {
             this.uis = new Dictionary<object, UIElement>();
         }
+
         private readonly Dictionary<object, UIElement> uis;
 
         /// <summary>

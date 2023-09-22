@@ -42,7 +42,7 @@ namespace Baboon
 
         protected abstract Window CreateShell();
 
-        protected sealed override void OnStartup(StartupEventArgs e)
+        protected override sealed void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
             this.RegisterTypes(this.Container);

@@ -13,7 +13,9 @@ namespace Baboon
             this.m_appModule = appModule;
             this.Loaded = true;
         }
+
         public string RootDir { get; set; }
+
         public AppModuleInfo(ModuleDescription description, Func<IAppModule> appModuleFunc)
         {
             this.Description = description;

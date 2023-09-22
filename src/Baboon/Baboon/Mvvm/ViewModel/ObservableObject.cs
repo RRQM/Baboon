@@ -15,14 +15,12 @@ using System.Windows;
 
 namespace Baboon.Mvvm
 {
-
     /// <summary>
     /// 基类
     /// </summary>
     [Serializable]
     public class ObservableObject : INotifyPropertyChanged
     {
-
         /// <summary>
         /// 事件
         /// </summary>

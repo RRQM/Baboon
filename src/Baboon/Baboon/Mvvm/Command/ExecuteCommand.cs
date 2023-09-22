@@ -27,7 +27,6 @@ namespace Baboon.Mvvm
             this.m_delCommand = command;
         }
 
-
         private readonly Action m_delCommand;
 
         /// <inheritdoc/>

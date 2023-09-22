@@ -21,8 +21,6 @@ namespace Baboon.Mvvm
         public static readonly DependencyProperty EventsProperty =
             DependencyProperty.RegisterAttached("Events", typeof(IEnumerable<IEventAction>), typeof(EventCommands), new PropertyMetadata(null, OnCommandChanged));
 
-
-
         private static void OnCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (e.NewValue is IEnumerable eventActions)
@@ -47,9 +45,7 @@ namespace Baboon.Mvvm
                         throw new Exception($"事件名不能为空");
                     }
                 }
-
             }
         }
-
     }
 }

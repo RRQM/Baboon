@@ -8,13 +8,12 @@ namespace Baboon.Mvvm
     /// </summary>
     public static class PasswordBoxHelper
     {
-
         public static readonly DependencyProperty PasswordProperty = DependencyProperty.RegisterAttached("Password", typeof(string), typeof(PasswordBoxHelper),
                                                                                                           new FrameworkPropertyMetadata(string.Empty, OnPasswordPropertyChanged));
+
         public static readonly DependencyProperty AttachProperty = DependencyProperty.RegisterAttached("Attach", typeof(bool), typeof(PasswordBoxHelper), new PropertyMetadata(false, OnAttachPropertyChanged));
 
         private static readonly DependencyProperty IsUpdatingProperty = DependencyProperty.RegisterAttached("IsUpdating", typeof(bool), typeof(PasswordBoxHelper));
-
 
         public static void SetAttach(DependencyObject dp, bool value)
         {

@@ -3,14 +3,46 @@
 	<PropertyGroup>
 		<TargetFrameworks>net45;net6.0-windows</TargetFrameworks>
 		<UseWPF>true</UseWPF>
+		<PackageTags>wpf;ioc;logger;plugin</PackageTags>
+		<Description>
+			这是一个wpf的，模块化开发的功能库。支持模块加载、下载、更新等。同时包含了本地数据库、本地日志组件等功能。
+		</Description>
+		<ApplicationIcon>logo.ico</ApplicationIcon>
+		<PackageIcon>logo.png</PackageIcon>
+		<Title>Baboon</Title>
+		<SignAssembly>True</SignAssembly>
+		<AssemblyOriginatorKeyFile>Baboon.snk</AssemblyOriginatorKeyFile>
+		<Version>1.0.0-beta</Version>
+		<Company>若汝棋茗</Company>
+		<Copyright>Copyright © 2023 若汝棋茗</Copyright>
+		<PackageProjectUrl>https://gitee.com/rrqm_home/baboon</PackageProjectUrl>
+		<PackageIconUrl></PackageIconUrl>
+		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<Authors>若汝棋茗</Authors>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+		<DocumentationFile></DocumentationFile>
+		<RepositoryUrl>https://gitee.com/rrqm_home/baboon</RepositoryUrl>
 	</PropertyGroup>
-
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<DebugSymbols>True</DebugSymbols>
+		<DebugType>Embedded</DebugType>
+		<EmbedAllSources>True</EmbedAllSources>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Include="LICENSE.txt">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+		<None Include="logo.png">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="LiteDB" Version="5.0.17" />
-		<PackageReference Include="TouchSocket.Core" Version="2.0.0-beta.164" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Mvvm\Window\" />
+		<PackageReference Include="TouchSocket.Core" Version="2.0.0-beta.186" />
 	</ItemGroup>
 </Project>

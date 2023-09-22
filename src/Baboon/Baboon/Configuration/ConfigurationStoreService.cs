@@ -6,11 +6,13 @@ namespace Baboon
 {
     public class ConfigurationStoreService : IConfigurationStoreService
     {
+        private readonly IConfigService m_config;
         private LiteDatabase m_litedb;
 
-        public ConfigurationStoreService()
+        public ConfigurationStoreService(IConfigService config)
         {
             this.Reload();
+            this.m_config = config;
         }
 
         public T Get<T>(string key)
@@ -32,7 +34,7 @@ namespace Baboon
         public void Reload()
         {
             this.m_litedb.SafeDispose();
-            this.m_litedb = new LiteDatabase(ConstUtility.Path_File_ConfigurationDb);
+            this.m_litedb = new LiteDatabase(m_config.GetPathFileConfigurationDb());
         }
 
         public void Set<T>(string key, T value)

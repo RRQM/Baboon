@@ -1,30 +1,32 @@
-﻿namespace Baboon
+﻿using System.IO;
+
+namespace Baboon
 {
     public class ConfigService : IConfigService
     {
         public string GetPathDirPlugins()
         {
-            return ConstUtility.Path_Dir_Plugins;
+            return "Plugins";
         }
 
         public string GetPathDirConfiguration()
         {
-            return ConstUtility.Path_Dir_Configuration;
+            return "Configuration";
         }
 
         public string GetPathDirLogs()
         {
-            return ConstUtility.Path_Dir_Logs;
+            return "Logs";
         }
 
         public string GetPathFileConfigurationDb()
         {
-            return ConstUtility.Path_File_ConfigurationDb;
+            return Path.Combine(GetPathDirConfiguration(), "Configuration.db");
         }
 
         public string GetPathDirTemp()
         {
-            return ConstUtility.Path_Dir_Temp;
+            return "Temp";
         }
     }
 }
