@@ -5,9 +5,11 @@ VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Baboon", "Baboon\Baboon.csproj", "{8FC4BC25-327D-4842-B48C-BFE931E4E5DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Baboon.Wpf", "Demo\Baboon.Wpf\Baboon.Wpf.csproj", "{67DE8818-9402-4F06-8592-24C170835759}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Baboon.Wpf", "Demo\Baboon.Wpf\Baboon.Wpf.csproj", "{67DE8818-9402-4F06-8592-24C170835759}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demo", "Demo", "{744923A9-391F-483E-90E9-DC7F9715E117}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{8B1AEC7E-FDD5-40F8-85CA-89C27A528112}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{67DE8818-9402-4F06-8592-24C170835759} = {744923A9-391F-483E-90E9-DC7F9715E117}
+		{8B1AEC7E-FDD5-40F8-85CA-89C27A528112} = {744923A9-391F-483E-90E9-DC7F9715E117}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B084965B-CBA4-4C62-B0B3-7AC1A739B585}

@@ -122,7 +122,7 @@ namespace Baboon
             lock (this.m_locker)
             {
                 var count = 0;
-                foreach (var item in Directory.GetFiles(m_config.GetPathDirPlugins(), "Description.xml", SearchOption.AllDirectories))
+                foreach (var item in Directory.GetFiles(this.m_config.GetPathDirPlugins(), "Description.xml", SearchOption.AllDirectories))
                 {
                     var descriptionBuilder = ModuleDescriptionBuilder.CreateByFile(item);
                     if (this.TryGetAppModuleInfo(descriptionBuilder.Description.Id, out var appModuleInfo))
