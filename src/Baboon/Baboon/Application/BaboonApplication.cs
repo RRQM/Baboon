@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using TouchSocket.Core;
@@ -68,13 +66,25 @@ namespace Baboon
             return this.Container.Resolve<ILoggerFactoryService>().GetLogger(this.GetType().Name);
         }
 
+        /// <summary>
+        /// 配置模块
+        /// </summary>
+        /// <param name="moduleCatalog"></param>
         protected virtual void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {
         }
 
+        /// <summary>
+        /// 获取主窗体
+        /// </summary>
+        /// <returns></returns>
         protected abstract Window CreateShell();
 
-        protected override sealed void OnStartup(StartupEventArgs e)
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        /// <param name="e"></param>
+        protected sealed override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
@@ -86,8 +96,16 @@ namespace Baboon
             this.MainWindow.Show();
         }
 
+        /// <summary>
+        /// 注册容器类型
+        /// </summary>
+        /// <param name="container"></param>
         protected abstract void RegisterTypes(IContainer container);
 
+        /// <summary>
+        /// 在异常的时候
+        /// </summary>
+        /// <param name="ex"></param>
         protected virtual void OnException(Exception ex)
         {
             this.GetAppLogger().Exception(ex);

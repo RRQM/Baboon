@@ -7,14 +7,23 @@ using TouchSocket.Core;
 
 namespace Baboon
 {
+    /// <summary>
+    /// ModuleCatalog
+    /// </summary>
     public class ModuleCatalog : IModuleCatalog
     {
-        private readonly IContainer m_container;
         private readonly BaboonApplication m_application;
         private readonly IConfigService m_config;
+        private readonly IContainer m_container;
         private readonly object m_locker = new object();
         private readonly Dictionary<string, AppModuleInfo> m_modules = new Dictionary<string, AppModuleInfo>();
 
+        /// <summary>
+        /// ModuleCatalog
+        /// </summary>
+        /// <param name="container"></param>
+        /// <param name="application"></param>
+        /// <param name="config"></param>
         public ModuleCatalog(IContainer container, BaboonApplication application, IConfigService config)
         {
             this.m_container = container;
@@ -22,6 +31,7 @@ namespace Baboon
             this.m_config = config;
         }
 
+        /// <inheritdoc/>
         public void Add(Type moduleType)
         {
             if (!typeof(IAppModule).IsAssignableFrom(moduleType))
@@ -39,14 +49,7 @@ namespace Baboon
             this.m_modules.Add(appModule.Description.Id, new AppModuleInfo(appModule));
         }
 
-        private void LoadResources(IAppModule appModule)
-        {
-            if (appModule.Resources != null)
-            {
-                this.m_application.Resources.MergedDictionaries.Add(appModule.Resources);
-            }
-        }
-
+        /// <inheritdoc/>
         public void Add(IAppModule appModule)
         {
             this.RemoveAppModule(appModule.Description.Id);
@@ -55,6 +58,7 @@ namespace Baboon
             this.m_modules.Add(appModule.Description.Id, new AppModuleInfo(appModule));
         }
 
+        /// <inheritdoc/>
         public void Add(ModuleDescriptionBuilder builder)
         {
             IAppModule fun()
@@ -79,11 +83,13 @@ namespace Baboon
             });
         }
 
+        /// <inheritdoc/>
         public bool Contains(string id)
         {
             return this.m_modules.ContainsKey(id);
         }
 
+        /// <inheritdoc/>
         public AppModuleInfo GetAppModuleInfo(string id)
         {
             if (this.m_modules.TryGetValue(id, out var appModule))
@@ -93,11 +99,13 @@ namespace Baboon
             return default;
         }
 
+        /// <inheritdoc/>
         public IEnumerable<AppModuleInfo> GetAppModules()
         {
             return this.m_modules.Values;
         }
 
+        /// <inheritdoc/>
         public bool RemoveAppModule(string id)
         {
             if (this.m_modules.TryGetValue(id, out var appModule))
@@ -112,17 +120,19 @@ namespace Baboon
             return false;
         }
 
+        /// <inheritdoc/>
         public bool TryGetAppModuleInfo(string id, out AppModuleInfo appModuleInfo)
         {
             return this.m_modules.TryGetValue(id, out appModuleInfo);
         }
 
+        /// <inheritdoc/>
         public int UpdateLocalAppModules()
         {
             lock (this.m_locker)
             {
                 var count = 0;
-                foreach (var item in Directory.GetFiles(this.m_config.GetPathDirPlugins(), "Description.xml", SearchOption.AllDirectories))
+                foreach (var item in Directory.GetFiles(this.m_config.GetPathDirModules(), "Description.xml", SearchOption.AllDirectories))
                 {
                     var descriptionBuilder = ModuleDescriptionBuilder.CreateByFile(item);
                     if (this.TryGetAppModuleInfo(descriptionBuilder.Description.Id, out var appModuleInfo))
@@ -133,6 +143,14 @@ namespace Baboon
                     count++;
                 }
                 return count;
+            }
+        }
+
+        private void LoadResources(IAppModule appModule)
+        {
+            if (appModule.Resources != null)
+            {
+                this.m_application.Resources.MergedDictionaries.Add(appModule.Resources);
             }
         }
     }

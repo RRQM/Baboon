@@ -2,50 +2,63 @@
 
 namespace Baboon
 {
+
+    /// <summary>
+    /// ConfigService
+    /// </summary>
     public class ConfigService : IConfigService
     {
+        /// <summary>
+        /// ConfigService
+        /// </summary>
         public ConfigService()
         {
-            if (!Directory.Exists(GetPathDirPlugins()))
+            if (!Directory.Exists(this.GetPathDirModules()))
             {
-                Directory.CreateDirectory(GetPathDirPlugins());
+                Directory.CreateDirectory(this.GetPathDirModules());
             }
 
-            if (!Directory.Exists(GetPathDirConfiguration()))
+            if (!Directory.Exists(this.GetPathDirConfiguration()))
             {
-                Directory.CreateDirectory(GetPathDirConfiguration());
+                Directory.CreateDirectory(this.GetPathDirConfiguration());
             }
 
-            if (!Directory.Exists(GetPathDirLogs()))
+            if (!Directory.Exists(this.GetPathDirLogs()))
             {
-                Directory.CreateDirectory(GetPathDirLogs());
+                Directory.CreateDirectory(this.GetPathDirLogs());
             }
 
-            if (!Directory.Exists(GetPathDirTemp()))
+            if (!Directory.Exists(this.GetPathDirTemp()))
             {
-                Directory.CreateDirectory(GetPathDirTemp());
+                Directory.CreateDirectory(this.GetPathDirTemp());
             }
         }
-        public string GetPathDirPlugins()
+
+        /// <inheritdoc/>
+        public string GetPathDirModules()
         {
-            return "Plugins";
+            return "Modules";
         }
 
+        /// <inheritdoc/>
         public string GetPathDirConfiguration()
         {
             return "Configuration";
         }
 
+        /// <inheritdoc/>
         public string GetPathDirLogs()
         {
             return "Logs";
         }
 
+        /// <inheritdoc/>
         public string GetPathFileConfigurationDb()
         {
-            return Path.Combine(GetPathDirConfiguration(), "Configuration.db");
+            return Path.Combine(this.GetPathDirConfiguration(), "Configuration.db");
         }
 
+        /// <inheritdoc/>
         public string GetPathDirTemp()
         {
             return "Temp";

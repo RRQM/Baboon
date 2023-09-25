@@ -4,18 +4,26 @@ using TouchSocket.Core;
 
 namespace Baboon
 {
+    /// <summary>
+    /// ConfigurationStoreService
+    /// </summary>
     public class ConfigurationStoreService : IConfigurationStoreService
     {
         private readonly IConfigService m_config;
         private LiteDatabase m_litedb;
 
+        /// <summary>
+        /// ConfigurationStoreService
+        /// </summary>
+        /// <param name="config"></param>
         public ConfigurationStoreService(IConfigService config)
         {
             this.Reload();
             this.m_config = config;
         }
 
-        public T Get<T>(string key)
+        /// <inheritdoc/>
+        public T Get<T>(string key) where T : new()
         {
             var kv = this.m_litedb.GetCollection<KV>(nameof(ConfigurationStoreService)).FindById(key);
             if (kv == null)
@@ -31,12 +39,14 @@ namespace Baboon
             return SerializeConvert.JsonDeserializeFromString<T>(kv.Value);
         }
 
+        /// <inheritdoc/>
         public void Reload()
         {
             this.m_litedb.SafeDispose();
-            this.m_litedb = new LiteDatabase(m_config.GetPathFileConfigurationDb());
+            this.m_litedb = new LiteDatabase(this.m_config.GetPathFileConfigurationDb());
         }
 
+        /// <inheritdoc/>
         public void Set<T>(string key, T value)
         {
             if (key is null)

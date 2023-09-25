@@ -4,16 +4,52 @@ using System.Xml;
 
 namespace Baboon
 {
+    /// <summary>
+    /// 模块描述
+    /// </summary>
     public class ModuleDescription
     {
+        /// <summary>
+        /// 模块唯一Id。用于标识不同的模块。
+        /// </summary>
         public string Id { get; set; }
+
+        /// <summary>
+        /// 显示名称
+        /// </summary>
         public string DisplayName { get; set; }
+
+        /// <summary>
+        /// 版本
+        /// </summary>
         public string Version { get; set; }
+
+        /// <summary>
+        /// 作者
+        /// </summary>
         public string Authors { get; set; }
+
+        /// <summary>
+        /// 描述
+        /// </summary>
         public string Description { get; set; }
+
+        /// <summary>
+        /// 是否包含可视化UI
+        /// </summary>
         public bool HasView { get; set; }
+
+        /// <summary>
+        /// 封面
+        /// </summary>
         public string CoverImage { get; set; }
 
+        /// <summary>
+        /// 从xml文件路径创建描述
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static ModuleDescription CreateByDescriptionFile(string path)
         {
             var description = new ModuleDescription();
@@ -36,6 +72,12 @@ namespace Baboon
             return description;
         }
 
+        /// <summary>
+        /// 从流创建描述
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static ModuleDescription CreateByDescriptionStream(Stream stream)
         {
             var description = new ModuleDescription();

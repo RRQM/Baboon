@@ -30,7 +30,7 @@ namespace Baboon
                     var view = (FrameworkElement)obj;
                     view.Loaded += (s, e) =>
                     {
-                       var viewModel=container.Resolve(viewModelType);
+                        var viewModel = container.Resolve(viewModelType);
                         view.DataContext = viewModel;
 
                         if (viewModel is ViewModelBase viewModelBase)
@@ -52,7 +52,7 @@ namespace Baboon
         public static void RegisterSingletonView<TView, TViewModel>(this IContainer container)
             where TView : FrameworkElement
         {
-            RegisterSingletonView(container,typeof(TView),typeof(TViewModel));
+            RegisterSingletonView(container, typeof(TView), typeof(TViewModel));
         }
         #endregion
 
