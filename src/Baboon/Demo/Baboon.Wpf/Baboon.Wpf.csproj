@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Baboon\Baboon.csproj" />
+    <ProjectReference Include="..\Modules\SayHello.Module\SayHello.Module.csproj" />
   </ItemGroup>
 
 </Project>

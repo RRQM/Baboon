@@ -1,4 +1,5 @@
 ﻿using Baboon.Wpf.ViewModels;
+using SatHello.Module;
 using System.Windows;
 using TouchSocket.Core;
 
@@ -16,7 +17,13 @@ namespace Baboon.Wpf
 
         protected override void RegisterTypes(IContainer container)
         {
-            container.RegisterSingletonView<MainWindow,MainViewModel>();
+            container.RegisterSingletonView<MainWindow, MainViewModel>();
+        }
+
+        protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
+        {
+            //以类型注册
+            moduleCatalog.Add(typeof(SayHelloModule));
         }
 
         protected override void OnException(Exception ex)

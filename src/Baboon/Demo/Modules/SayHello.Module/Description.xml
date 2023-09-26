@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package>
+	<metadata>
+		<Id>SayHello</Id>
+		<DisplayName>SayHello</DisplayName>
+		<Version>1.0.0</Version>
+		<Authors>RRQM</Authors>
+		<Description>会弹出Hello</Description>
+		<!--<CoverImage>logo.png</CoverImage>-->
+		<HasView>false</HasView>
+	</metadata>
+	<module>SayHello.Module.dll</module>
+</package>
