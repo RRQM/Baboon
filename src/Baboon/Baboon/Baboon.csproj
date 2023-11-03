@@ -43,7 +43,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="LiteDB" Version="5.0.17" />
-		<PackageReference Include="TouchSocket.Core" Version="2.0.0-beta.188" />
+		<PackageReference Include="TouchSocket.Core" Version="2.0.0-beta.221" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)'=='net45'">
 		<Reference Include="System.IO.Compression" />
