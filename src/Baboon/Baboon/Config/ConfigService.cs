@@ -35,31 +35,31 @@ namespace Baboon
         }
 
         /// <inheritdoc/>
-        public string GetPathDirModules()
+        public virtual string GetPathDirModules()
         {
             return "Modules";
         }
 
         /// <inheritdoc/>
-        public string GetPathDirConfiguration()
+        public virtual string GetPathDirConfiguration()
         {
             return "Configuration";
         }
 
         /// <inheritdoc/>
-        public string GetPathDirLogs()
+        public virtual string GetPathDirLogs()
         {
             return "Logs";
         }
 
         /// <inheritdoc/>
-        public string GetPathFileConfigurationDb()
+        public virtual string GetPathFileConfigurationDb()
         {
             return Path.Combine(this.GetPathDirConfiguration(), "Configuration.db");
         }
 
         /// <inheritdoc/>
-        public string GetPathDirTemp()
+        public virtual string GetPathDirTemp()
         {
             return "Temp";
         }
