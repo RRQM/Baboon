@@ -25,7 +25,12 @@ namespace Baboon.Mvvm
         /// </summary>
         public bool IsInDesignMode => DesignerProperties.GetIsInDesignMode(new DependencyObject());
 
-        public virtual void OnSetView<TView>(TView window) where TView : FrameworkElement
+        /// <summary>
+        /// 当设置View时
+        /// </summary>
+        /// <typeparam name="TView"></typeparam>
+        /// <param name="view"></param>
+        public virtual void OnSetView<TView>(TView view) where TView : FrameworkElement
         {
         }
     }

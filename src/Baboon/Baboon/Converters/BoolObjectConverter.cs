@@ -11,32 +11,58 @@ namespace Baboon.Converters
     /// <summary>
     /// bool与object的转换。
     /// </summary>
-    public class BoolObjectConverter : IValueConverter
+    public class BoolObjectConverter<TValue> : IValueConverter
     {
         /// <summary>
         /// 当为True时的对象内容。
         /// </summary>
-        public object TrueObject { get; set; }
+        public TValue TrueValue { get; set; }
 
         /// <summary>
         /// 当为False的对象内容
         /// </summary>
-        public object FalseObject { get; set; }
+        public TValue FalseValue { get; set; }
+
+        /// <summary>
+        /// 当为Null的对象内容
+        /// </summary>
+        public TValue NullValue { get; set; }
+
+        /// <summary>
+        /// 是否支持ConvertBack。默认False
+        /// </summary>
+        public bool CanConvertBack { get; set; }
 
         /// <inheritdoc/>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is bool b&&b)
+            if (value is null)
             {
-                return TrueObject;
+                return this.NullValue;
             }
-            return FalseObject;
+            if (value is bool b && b)
+            {
+                return TrueValue;
+            }
+            return FalseValue;
         }
 
         /// <inheritdoc/>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-           return value.Equals(TrueObject);
+            if (!this.CanConvertBack)
+            {
+                return default;
+            }
+            return value.Equals(TrueValue);
         }
+    }
+
+    /// <summary>
+    /// BoolObjectConverter
+    /// </summary>
+    public class BoolObjectConverter : BoolObjectConverter<object>
+    { 
+    
     }
 }
