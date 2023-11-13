@@ -9,6 +9,7 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Baboon.Mvvm
@@ -18,6 +19,8 @@ namespace Baboon.Mvvm
     /// </summary>
     public class ExecuteCommand : ICommand
     {
+        private readonly Action m_delCommand;
+
         /// <summary>
         /// ExecuteCommand
         /// </summary>
@@ -27,7 +30,17 @@ namespace Baboon.Mvvm
             this.m_delCommand = command;
         }
 
-        private readonly Action m_delCommand;
+        /// <summary>
+        /// ExecuteCommand
+        /// </summary>
+        /// <param name="command"></param>
+        public ExecuteCommand(Func<Task> command)
+        {
+            this.m_delCommand = async () =>
+            {
+                await command.Invoke();
+            };
+        }
 
         /// <inheritdoc/>
         public event EventHandler CanExecuteChanged;

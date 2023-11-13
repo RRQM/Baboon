@@ -9,33 +9,39 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Baboon.Mvvm
 {
-    /// <summary>
-    ///
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="parameter"></param>
-    public delegate void DelegateCommand<T>(T parameter);
-
     /// <summary>
     /// 绑定有参数命令
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class ExecuteCommand<T> : ICommand
     {
+        private readonly Action<T> m_delCommand;
+
         /// <summary>
-        ///
+        /// ExecuteCommand
         /// </summary>
         /// <param name="command"></param>
-        public ExecuteCommand(DelegateCommand<T> command)
+        public ExecuteCommand(Action<T> command)
         {
-            this.delCommand = command;
+            this.m_delCommand = command;
         }
 
-        private readonly DelegateCommand<T> delCommand;
+        /// <summary>
+        /// ExecuteCommand
+        /// </summary>
+        /// <param name="command"></param>
+        public ExecuteCommand(Func<T, Task> command)
+        {
+            this.m_delCommand = async (t) =>
+            {
+                await command.Invoke(t);
+            };
+        }
 
         /// <summary>
         ///
@@ -49,7 +55,7 @@ namespace Baboon.Mvvm
         /// <returns></returns>
         public bool CanExecute(object parameter)
         {
-            if (this.delCommand == null)
+            if (this.m_delCommand == null)
             {
                 return false;
             }
@@ -66,7 +72,7 @@ namespace Baboon.Mvvm
             if (this.CanExecute(parameter))
             {
                 CanExecuteChanged?.Invoke(this, null);
-                this.delCommand.Invoke(t);
+                this.m_delCommand.Invoke(t);
             }
         }
     }
