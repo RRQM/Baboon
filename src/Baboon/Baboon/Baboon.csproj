@@ -12,7 +12,7 @@
 		<Title>Baboon</Title>
 		<SignAssembly>True</SignAssembly>
 		<AssemblyOriginatorKeyFile>Baboon.snk</AssemblyOriginatorKeyFile>
-		<Version>1.1.0</Version>
+		<Version>1.1.1</Version>
 		<Company>若汝棋茗</Company>
 		<Copyright>Copyright © 2023 若汝棋茗</Copyright>
 		<PackageProjectUrl>https://gitee.com/rrqm_home/baboon</PackageProjectUrl>
@@ -42,8 +42,8 @@
 		</None>
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="LiteDB" Version="5.0.17" />
-		<PackageReference Include="TouchSocket.Core" Version="2.0.0-beta.226" />
+		<PackageReference Include="LiteDB" Version="5.0.19" />
+		<PackageReference Include="TouchSocket.Core" Version="2.0.0-beta.279" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)'=='net45'">
 		<Reference Include="System.IO.Compression" />
