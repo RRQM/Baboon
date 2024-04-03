@@ -34,13 +34,6 @@ namespace Baboon
         {
             this.Container = container;
 
-            #region 注册
-            container.RegisterSingleton<IModuleCatalog, ModuleCatalog>();
-            container.RegisterSingleton<BaboonApplication>(this);
-            container.RegisterSingleton<ILoggerFactoryService, LoggerFactoryService>();
-            container.RegisterSingleton<IConfigService, ConfigService>();
-            #endregion
-
             #region 异常处理
 
             //UI线程未捕获异常处理事件
@@ -87,6 +80,15 @@ namespace Baboon
         protected sealed override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            #region 注册
+
+            var configService = new ConfigService();
+            this.Container.RegisterSingleton<IModuleCatalog>(new ModuleCatalog(this.Container, this, configService));
+            this.Container.RegisterSingleton<BaboonApplication>(this);
+            this.Container.RegisterSingleton<ILoggerFactoryService>(new LoggerFactoryService(configService));
+            this.Container.RegisterSingleton<IConfigService>(configService);
+            #endregion
 
             this.RegisterTypes(this.Container);
 
