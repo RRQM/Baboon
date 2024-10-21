@@ -15,10 +15,7 @@ namespace Baboon
         /// <param name="id"></param>
         public Logger(string dir, string id)
         {
-            this.AddLogger(new FileLogger(Path.Combine(dir, id))
-            {
-                LogLevel = LogLevel.Trace
-            });
+            this.AddFileLogger(Path.Combine(dir, id));
         }
     }
 }
