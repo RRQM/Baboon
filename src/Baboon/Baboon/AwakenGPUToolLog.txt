@@ -1,2 +1,0 @@
-Awake Gpu start
-GPU OK.

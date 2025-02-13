@@ -1,6 +1,7 @@
-﻿<baboon:BaboonApplication x:Class="Baboon.Wpf.App"
-                          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                          xmlns:baboon="clr-namespace:Baboon;assembly=Baboon">
+﻿<baboon:BaboonApplication
+    x:Class="Baboon.Wpf.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:baboon="clr-namespace:Baboon;assembly=Baboon">
     <Application.Resources />
 </baboon:BaboonApplication>

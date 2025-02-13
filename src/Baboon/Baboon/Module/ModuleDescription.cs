@@ -7,102 +7,40 @@ namespace Baboon
     /// <summary>
     /// 模块描述
     /// </summary>
-    public class ModuleDescription
+    public readonly struct ModuleDescription
     {
+        public ModuleDescription(string id, string name, Version version, string authors, string description)
+        {
+            this.Id = id;
+            this.Name = name;
+            this.Version = version;
+            this.Authors = authors;
+            this.Description = description;
+        }
+
         /// <summary>
         /// 模块唯一Id。用于标识不同的模块。
         /// </summary>
-        public string Id { get; set; }
+        public string Id { get; }
 
         /// <summary>
         /// 显示名称
         /// </summary>
-        public string DisplayName { get; set; }
+        public string Name { get; }
 
         /// <summary>
         /// 版本
         /// </summary>
-        public string Version { get; set; }
+        public Version Version { get; }
 
         /// <summary>
         /// 作者
         /// </summary>
-        public string Authors { get; set; }
+        public string Authors { get;}
 
         /// <summary>
         /// 描述
         /// </summary>
-        public string Description { get; set; }
-
-        /// <summary>
-        /// 是否包含可视化UI
-        /// </summary>
-        public bool HasView { get; set; }
-
-        /// <summary>
-        /// 封面
-        /// </summary>
-        public string CoverImage { get; set; }
-
-        /// <summary>
-        /// 从xml文件路径创建描述
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        public static ModuleDescription CreateByDescriptionFile(string path)
-        {
-            var description = new ModuleDescription();
-
-            var xml = new XmlDocument();
-            xml.Load(path);
-            var metadata = xml.SelectSingleNode("package/metadata");
-            if (metadata is null)
-            {
-                throw new Exception("在相关描述文件中没有找到metadata");
-            }
-
-            description.Id = GetXmlNodeText(metadata, nameof(Id));
-            description.DisplayName = GetXmlNodeText(metadata, nameof(DisplayName));
-            description.Version = GetXmlNodeText(metadata, nameof(Version));
-            description.Authors = GetXmlNodeText(metadata, nameof(Authors));
-            description.Description = GetXmlNodeText(metadata, nameof(Description));
-            description.CoverImage = GetXmlNodeText(metadata, nameof(CoverImage));
-            description.HasView = bool.Parse(GetXmlNodeText(metadata, nameof(HasView)));
-            return description;
-        }
-
-        /// <summary>
-        /// 从流创建描述
-        /// </summary>
-        /// <param name="stream"></param>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        public static ModuleDescription CreateByDescriptionStream(Stream stream)
-        {
-            var description = new ModuleDescription();
-
-            var xml = new XmlDocument();
-            xml.Load(stream);
-            var metadata = xml.SelectSingleNode("package/metadata");
-            if (metadata is null)
-            {
-                throw new Exception("在相关描述文件中没有找到metadata");
-            }
-
-            description.Id = GetXmlNodeText(metadata, nameof(Id));
-            description.DisplayName = GetXmlNodeText(metadata, nameof(DisplayName));
-            description.Version = GetXmlNodeText(metadata, nameof(Version));
-            description.Authors = GetXmlNodeText(metadata, nameof(Authors));
-            description.Description = GetXmlNodeText(metadata, nameof(Description));
-            description.CoverImage = GetXmlNodeText(metadata, nameof(CoverImage));
-            description.HasView = bool.Parse(GetXmlNodeText(metadata, nameof(HasView)));
-            return description;
-        }
-
-        private static string GetXmlNodeText(XmlNode xmlNode, string xPath)
-        {
-            return xmlNode?.SelectSingleNode(xPath)?.InnerText;
-        }
+        public string Description { get;}
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Windows;
 using System.Windows.Media;
 using TouchSocket.Core;
 
@@ -7,36 +9,42 @@ namespace Baboon
     /// <summary>
     /// 模块基类
     /// </summary>
-    public abstract class AppModuleBase : DisposableObject, IAppModule
+    public abstract class AppModuleBase : SafetyDisposableObject, IAppModule
     {
-        /// <summary>
-        /// 模块基类
-        /// </summary>
-        /// <param name="loggerFactory"></param>
-        public AppModuleBase(ILoggerFactoryService loggerFactory)
-        {
-            this.Logger = loggerFactory.GetLogger(this.GetType().Name);
-            //this.Resources = new ResourceDictionary();
-        }
+        private IServiceScope serviceScope;
 
         /// <inheritdoc/>
         public abstract ModuleDescription Description { get; }
 
         /// <inheritdoc/>
-        public abstract ImageSource Icon { get; }
+        public ResourceDictionary Resources { get; protected set; }
 
         /// <inheritdoc/>
-        public ILogger Logger { get; protected set; }
+        public IServiceProvider ServiceProvider => serviceScope.ServiceProvider;
 
         /// <inheritdoc/>
-        public ResourceDictionary Resources { get; set; }
+        public abstract void Initialize(IServiceCollection services);
 
         /// <inheritdoc/>
-        public virtual void OnInitialized(IContainer container)
+        public void Run(IServiceProvider serviceProvider)
         {
+            this.serviceScope = serviceProvider.CreateScope();
+            this.OnStartup();
         }
 
+        /// <summary>
+        /// 当程序模块启动的时候。
+        /// </summary>
+        protected abstract void OnStartup();
+
         /// <inheritdoc/>
-        public abstract void Show(object parameter = null);
+        protected override void SafetyDispose(bool disposing)
+        {
+            if (disposing)
+            {
+                var serviceScope = this.serviceScope;
+                serviceScope.SafeDispose();
+            }
+        }
     }
 }

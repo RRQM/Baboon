@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System;
 using System.Windows;
 using System.Windows.Threading;
 using TouchSocket.Core;
@@ -81,16 +83,19 @@ namespace Baboon
         {
             base.OnStartup(e);
 
+
+            var builder = this.CreateApplicationBuilder(e);
+
             #region 注册
 
             var configService = new ConfigService();
-            this.Container.RegisterSingleton<IModuleCatalog>(new ModuleCatalog(this.Container, this, configService));
-            this.Container.RegisterSingleton<BaboonApplication>(this);
-            this.Container.RegisterSingleton<ILoggerFactoryService>(new LoggerFactoryService(configService));
-            this.Container.RegisterSingleton<IConfigService>(configService);
+            builder.Services.AddSingleton<IModuleCatalog>(new ModuleCatalog(this.Container, this, configService));
+            builder.Services.AddSingleton<BaboonApplication>(this);
+            builder.Services.AddSingleton<ILoggerFactoryService>(new LoggerFactoryService(configService));
+            builder.Services.AddSingleton<IConfigService>(configService);
             #endregion
 
-            this.RegisterTypes(this.Container);
+            this.RegisterTypes(builder.Services);
 
             var moduleCatalog = this.Container.Resolve<IModuleCatalog>();
             this.ConfigureModuleCatalog(moduleCatalog);
@@ -98,11 +103,14 @@ namespace Baboon
             this.MainWindow.Show();
         }
 
-        /// <summary>
-        /// 注册容器类型
-        /// </summary>
-        /// <param name="container"></param>
-        protected abstract void RegisterTypes(IContainer container);
+        protected virtual IHostApplicationBuilder CreateApplicationBuilder(StartupEventArgs e)
+        {
+            var builder = Host.CreateApplicationBuilder(e.Args);
+            return builder;
+        }
+
+
+        protected abstract void RegisterTypes(IServiceCollection services);
 
         /// <summary>
         /// 在异常的时候
