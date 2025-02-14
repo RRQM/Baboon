@@ -10,7 +10,7 @@
 		<Title>Baboon</Title>
 		<SignAssembly>True</SignAssembly>
 		<AssemblyOriginatorKeyFile>Baboon.snk</AssemblyOriginatorKeyFile>
-		<Version>1.2.0</Version>
+		<Version>2.0.0</Version>
 		<Company>若汝棋茗</Company>
 		<Copyright>Copyright © 2025 若汝棋茗</Copyright>
 		<PackageProjectUrl>https://gitee.com/rrqm_home/baboon</PackageProjectUrl>
@@ -22,6 +22,7 @@
 		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
 		<DocumentationFile></DocumentationFile>
 		<RepositoryUrl>https://gitee.com/rrqm_home/baboon</RepositoryUrl>
+		<PackageReadmeFile>Readme.md</PackageReadmeFile>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)'=='Release'">
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -29,7 +30,9 @@
 		<DebugType>Embedded</DebugType>
 		<EmbedAllSources>True</EmbedAllSources>
 	</PropertyGroup>
+
 	<ItemGroup>
+		<None Include="Readme.md" Pack="true" PackagePath="\"/>
 		<None Include="LICENSE.txt">
 			<Pack>True</Pack>
 			<PackagePath></PackagePath>
