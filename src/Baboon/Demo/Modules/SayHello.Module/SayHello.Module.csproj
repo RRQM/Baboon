@@ -12,10 +12,4 @@
 		<ProjectReference Include="..\..\..\Baboon\Baboon.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<None Update="Description.xml">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
-
 </Project>
