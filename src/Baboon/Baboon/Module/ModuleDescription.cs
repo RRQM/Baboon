@@ -7,7 +7,7 @@ namespace Baboon
     /// <summary>
     /// 模块描述
     /// </summary>
-    public readonly struct ModuleDescription
+    public class ModuleDescription
     {
         public ModuleDescription(string id, string name, Version version, string authors, string description)
         {

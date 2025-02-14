@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Windows;
 using System.Windows.Threading;
@@ -21,21 +23,8 @@ namespace Baboon
         /// 内部已经做了异常处理、日志记录、模块注册等功能。
         /// </para>
         /// </summary>
-        protected BaboonApplication() : this(new Container())
+        protected BaboonApplication()
         {
-
-        }
-
-        /// <summary>
-        /// 由Baboon提供的根应用程序。
-        /// <para>
-        /// 内部已经做了异常处理、日志记录、模块注册等功能。
-        /// </para>
-        /// </summary>
-        protected BaboonApplication(IContainer container)
-        {
-            this.Container = container;
-
             #region 异常处理
 
             //UI线程未捕获异常处理事件
@@ -47,19 +36,9 @@ namespace Baboon
             #endregion 异常处理
         }
 
-        /// <summary>
-        /// IOC容器
-        /// </summary>
-        public IContainer Container { get; }
-
-        /// <summary>
-        /// 获取主程序日志记录器
-        /// </summary>
-        /// <returns></returns>
-        public ILogger GetAppLogger()
-        {
-            return this.Container.Resolve<ILoggerFactoryService>().GetLogger(this.GetType().Name);
-        }
+        public IHost AppHost { get; private set; }
+        public ILogger<BaboonApplication> Logger => this.ServiceProvider.GetService<ILogger<BaboonApplication>>();
+        public IServiceProvider ServiceProvider => AppHost?.Services;
 
         /// <summary>
         /// 配置模块
@@ -69,48 +48,20 @@ namespace Baboon
         {
         }
 
+        protected virtual HostApplicationBuilder CreateApplicationBuilder(StartupEventArgs e)
+        {
+            var builder = Host.CreateApplicationBuilder(e.Args);
+
+            return builder;
+        }
+
         /// <summary>
         /// 获取主窗体
         /// </summary>
         /// <returns></returns>
-        protected abstract Window CreateShell();
+        protected abstract Window CreateMainWindow();
 
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <param name="e"></param>
-        protected sealed override void OnStartup(StartupEventArgs e)
-        {
-            base.OnStartup(e);
-
-
-            var builder = this.CreateApplicationBuilder(e);
-
-            #region 注册
-
-            var configService = new ConfigService();
-            builder.Services.AddSingleton<IModuleCatalog>(new ModuleCatalog(this.Container, this, configService));
-            builder.Services.AddSingleton<BaboonApplication>(this);
-            builder.Services.AddSingleton<ILoggerFactoryService>(new LoggerFactoryService(configService));
-            builder.Services.AddSingleton<IConfigService>(configService);
-            #endregion
-
-            this.RegisterTypes(builder.Services);
-
-            var moduleCatalog = this.Container.Resolve<IModuleCatalog>();
-            this.ConfigureModuleCatalog(moduleCatalog);
-            this.MainWindow = this.CreateShell();
-            this.MainWindow.Show();
-        }
-
-        protected virtual IHostApplicationBuilder CreateApplicationBuilder(StartupEventArgs e)
-        {
-            var builder = Host.CreateApplicationBuilder(e.Args);
-            return builder;
-        }
-
-
-        protected abstract void RegisterTypes(IServiceCollection services);
+        protected abstract void Initialize(AppModuleInitEventArgs e);
 
         /// <summary>
         /// 在异常的时候
@@ -118,8 +69,62 @@ namespace Baboon
         /// <param name="ex"></param>
         protected virtual void OnException(Exception ex)
         {
-            this.GetAppLogger().Exception(ex);
+            this.Logger?.LogError(ex, ex.Message);
         }
+
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        /// <param name="e"></param>
+        protected override sealed void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            var builder = this.CreateApplicationBuilder(e);
+
+            #region 配置、加载插件
+            var moduleCatalog = new ModuleCatalog();
+            this.ConfigureModuleCatalog(moduleCatalog);
+            moduleCatalog.Build();
+            #endregion
+
+            #region 注册服务
+
+            builder.Services.AddSingleton<IModuleCatalog>(moduleCatalog);
+            builder.Services.AddSingleton(this);
+
+            this.Initialize(new AppModuleInitEventArgs(e.Args, builder.Services));
+            #endregion 注册
+
+           
+
+
+            foreach (var appModule in moduleCatalog.GetAppModules())
+            {
+                var resources = appModule.Resources;
+                if (resources != null)
+                {
+                    this.Resources.MergedDictionaries.Add(resources);
+                }
+
+                appModule.Initialize(this, new AppModuleInitEventArgs(e.Args, builder.Services));
+            }
+
+            var host = builder.Build();
+            this.AppHost = host;
+
+            this.Startup(new AppModuleStartupEventArgs(host));
+
+            foreach (var appModule in moduleCatalog.GetAppModules())
+            {
+                appModule.Startup(this, new AppModuleStartupEventArgs(host));
+            }
+
+            this.MainWindow = this.CreateMainWindow();
+            this.MainWindow.Show();
+        }
+
+        protected abstract void Startup(AppModuleStartupEventArgs e);
 
         private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {

@@ -20,22 +20,19 @@ namespace Baboon
         public ResourceDictionary Resources { get; protected set; }
 
         /// <inheritdoc/>
-        public IServiceProvider ServiceProvider => serviceScope.ServiceProvider;
+        public virtual IServiceProvider ServiceProvider => serviceScope.ServiceProvider;
 
         /// <inheritdoc/>
-        public abstract void Initialize(IServiceCollection services);
-
-        /// <inheritdoc/>
-        public void Run(IServiceProvider serviceProvider)
+        public virtual void Initialize(BaboonApplication application, AppModuleInitEventArgs e)
         {
-            this.serviceScope = serviceProvider.CreateScope();
-            this.OnStartup();
+
         }
 
-        /// <summary>
-        /// 当程序模块启动的时候。
-        /// </summary>
-        protected abstract void OnStartup();
+        /// <inheritdoc/>
+        public virtual void Startup(BaboonApplication application, AppModuleStartupEventArgs e)
+        {
+            this.serviceScope = e.AppHost.Services.CreateScope();
+        }
 
         /// <inheritdoc/>
         protected override void SafetyDispose(bool disposing)

@@ -1,6 +1,6 @@
 ﻿namespace Baboon
 {
-    public interface IView
+    public class NavigationContext
     {
     }
 }

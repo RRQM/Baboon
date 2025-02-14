@@ -1,8 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Windows;
-using System.Windows.Media;
-using TouchSocket.Core;
 
 namespace Baboon
 {
@@ -21,10 +18,10 @@ namespace Baboon
         /// </summary>
         ResourceDictionary Resources { get;}
 
-        void Initialize(IServiceCollection services);
+        void Initialize(BaboonApplication application, AppModuleInitEventArgs e);
 
         IServiceProvider ServiceProvider { get; }
 
-        void Run(IServiceProvider serviceProvider);
+        void Startup(BaboonApplication application, AppModuleStartupEventArgs e);
     }
 }

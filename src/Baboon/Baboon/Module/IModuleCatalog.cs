@@ -39,7 +39,10 @@ namespace Baboon
         /// <param name="id"></param>
         /// <returns></returns>
         bool Contains(string id);
+        void Add<TAppModule>() where TAppModule : IAppModule, new();
+        void Build();
 
         bool IsReadonly { get; }
+        string ModulesDirPath { get; set; }
     }
 }

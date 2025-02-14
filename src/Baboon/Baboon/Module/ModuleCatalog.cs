@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,146 +13,154 @@ namespace Baboon
     /// </summary>
     public class ModuleCatalog : IModuleCatalog
     {
-        private readonly BaboonApplication m_application;
-        private readonly IConfigService m_config;
-        private readonly IContainer m_container;
+        private readonly List<Type> appModuleTypes = new List<Type>();
         private readonly object m_locker = new object();
-        private readonly Dictionary<string, AppModuleInfo> m_modules = new Dictionary<string, AppModuleInfo>();
+        private readonly Dictionary<string, IAppModule> m_modules = new Dictionary<string, IAppModule>();
+        private volatile bool isReadonly;
 
-        /// <summary>
-        /// ModuleCatalog
-        /// </summary>
-        /// <param name="container"></param>
-        /// <param name="application"></param>
-        /// <param name="config"></param>
-        public ModuleCatalog(IContainer container, BaboonApplication application, IConfigService config)
+        /// <inheritdoc/>
+        public bool IsReadonly => isReadonly;
+
+        /// <inheritdoc/>
+        public string ModulesDirPath { get; set; } = Path.GetFullPath("Modules");
+
+        /// <inheritdoc/>
+        public void Add<TAppModule>() where TAppModule : IAppModule, new()
         {
-            this.m_container = container;
-            this.m_application = application;
-            this.m_config = config;
+            Add(typeof(TAppModule));
         }
 
         /// <inheritdoc/>
         public void Add(Type moduleType)
         {
-            if (!typeof(IAppModule).IsAssignableFrom(moduleType))
+            lock (this.m_locker)
             {
-                throw new Exception($"模块类型必须继承{nameof(IAppModule)}");
+                ThrowIfReadonly();
+                if (!typeof(IAppModule).IsAssignableFrom(moduleType))
+                {
+                    throw new Exception($"模块类型必须继承{nameof(IAppModule)}");
+                }
+
+                if (appModuleTypes.Contains(moduleType))
+                {
+                    return;
+                }
+
+                foreach (var item in this.m_modules)
+                {
+                    if (item.Value.GetType() == moduleType)
+                    {
+                        return;
+                    }
+                }
+
+                appModuleTypes.Add(moduleType);
             }
 
-            this.m_container.RegisterSingleton(moduleType);
-
-            var appModule = (IAppModule)this.m_container.Resolve(moduleType);
-
-            this.RemoveAppModule(appModule.Description.Id);
-            this.LoadResources(appModule);
-            appModule.OnInitialized(this.m_container);
-            this.m_modules.Add(appModule.Description.Id, new AppModuleInfo(appModule));
         }
 
         /// <inheritdoc/>
         public void Add(IAppModule appModule)
         {
-            this.RemoveAppModule(appModule.Description.Id);
-            this.LoadResources(appModule);
-            appModule.OnInitialized(this.m_container);
-            this.m_modules.Add(appModule.Description.Id, new AppModuleInfo(appModule));
+            lock (this.m_locker)
+            {
+                ThrowIfReadonly();
+                if (appModule is null)
+                {
+                    throw new ArgumentNullException(nameof(appModule));
+                }
+
+                m_modules.Remove(appModule.Description.Id);
+
+                this.m_modules.Add(appModule.Description.Id, appModule);
+            }
+
         }
 
         /// <inheritdoc/>
-        public void Add(ModuleDescriptionBuilder builder)
+        public void Build()
         {
-            IAppModule fun()
+            lock (this.m_locker)
             {
-                var assembly = Assembly.LoadFrom(Path.GetFullPath(Path.Combine(builder.RootDir, builder.Module)));
+                this.ThrowIfReadonly();
 
-                var moduleType = assembly.ExportedTypes.Where(type => typeof(IAppModule).IsAssignableFrom(type)).First();
+                if (this.ModulesDirPath.HasValue() && Directory.Exists(this.ModulesDirPath))
+                {
+                    foreach (var path in Directory.GetFiles(this.ModulesDirPath, "*.dll", SearchOption.AllDirectories))
+                    {
+                        var assembly = Assembly.LoadFrom(Path.GetFullPath(path));
 
-                this.m_container.RegisterSingleton(moduleType);
+                        var moduleTypes = assembly.ExportedTypes.Where(type => typeof(IAppModule).IsAssignableFrom(type));
 
-                var appModule = (IAppModule)this.m_container.Resolve(moduleType);
+                        foreach (var moduleType in moduleTypes)
+                        {
+                            this.Add(moduleType);
+                        }
+                    }
+                }
 
-                this.LoadResources(appModule);
-                appModule.OnInitialized(this.m_container);
+                foreach (var moduleType in this.appModuleTypes)
+                {
+                    var module = (IAppModule)Activator.CreateInstance(moduleType);
+                    this.Add(module);
+                }
 
-                return appModule;
+                MakeReadonly();
             }
-            this.RemoveAppModule(builder.Description.Id);
-            this.m_modules.Add(builder.Description.Id, new AppModuleInfo(builder.Description, fun)
-            {
-                RootDir = builder.RootDir
-            });
+
         }
 
         /// <inheritdoc/>
         public bool Contains(string id)
         {
-            return this.m_modules.ContainsKey(id);
-        }
-
-        /// <inheritdoc/>
-        public AppModuleInfo GetAppModuleInfo(string id)
-        {
-            if (this.m_modules.TryGetValue(id, out var appModule))
+            lock (this.m_locker)
             {
-                return appModule;
+                return this.m_modules.ContainsKey(id);
             }
-            return default;
+
         }
 
         /// <inheritdoc/>
-        public IEnumerable<AppModuleInfo> GetAppModules()
+        public IAppModule GetAppModule(string id)
+        {
+            lock (this.m_locker)
+            {
+                if (this.m_modules.TryGetValue(id, out var appModule))
+                {
+                    return appModule;
+                }
+
+                return default;
+            }
+
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<IAppModule> GetAppModules()
         {
             return this.m_modules.Values;
         }
 
         /// <inheritdoc/>
-        public bool RemoveAppModule(string id)
+        public void MakeReadonly()
         {
-            if (this.m_modules.TryGetValue(id, out var appModule))
-            {
-                if (appModule.Loaded)
-                {
-                    appModule.GetApp().SafeDispose();
-                }
-
-                return this.m_modules.Remove(id);
-            }
-            return false;
+            this.isReadonly = true;
         }
 
-        /// <inheritdoc/>
-        public bool TryGetAppModuleInfo(string id, out AppModuleInfo appModuleInfo)
+        private void ThrowIfReadonly()
         {
-            return this.m_modules.TryGetValue(id, out appModuleInfo);
-        }
-
-        /// <inheritdoc/>
-        public int UpdateLocalAppModules()
-        {
-            lock (this.m_locker)
+            if (this.isReadonly)
             {
-                var count = 0;
-                foreach (var item in Directory.GetFiles(this.m_config.GetPathDirModules(), "Description.xml", SearchOption.AllDirectories))
-                {
-                    var descriptionBuilder = ModuleDescriptionBuilder.CreateByFile(item);
-                    if (this.TryGetAppModuleInfo(descriptionBuilder.Description.Id, out var appModuleInfo))
-                    {
-                        continue;
-                    }
-                    this.Add(descriptionBuilder);
-                    count++;
-                }
-                return count;
+                throw new Exception("The module catalog has been built, so it is not allowed to modify the collection content anymore.");
             }
         }
 
-        private void LoadResources(IAppModule appModule)
-        {
-            if (appModule.Resources != null)
-            {
-                this.m_application.Resources.MergedDictionaries.Add(appModule.Resources);
-            }
-        }
+        //private void LoadResources(IAppModule appModule)
+        //{
+        //    if (appModule.Resources != null)
+        //    {
+        //        this.m_application.Resources.MergedDictionaries.Add(appModule.Resources);
+        //    }
+        //}
     }
 }
