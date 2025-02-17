@@ -15,15 +15,13 @@ namespace SatHello.Module
 
         public override ModuleDescription Description { get; }
 
-        public override void Initialize(BaboonApplication application, AppModuleInitEventArgs e)
+        protected override void OnInitialize(BaboonApplication application, AppModuleInitEventArgs e)
         {
-            base.Initialize(application, e);
+            
         }
 
-        public override void Startup(BaboonApplication application, AppModuleStartupEventArgs e)
+        protected override void OnStartup(BaboonApplication application, AppModuleStartupEventArgs e)
         {
-            base.Startup(application, e);
-
             MessageBox.Show("Hello");
         }
     }

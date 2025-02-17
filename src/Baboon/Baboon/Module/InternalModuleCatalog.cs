@@ -8,15 +8,17 @@ using TouchSocket.Core;
 
 namespace Baboon
 {
-    /// <summary>
-    /// ModuleCatalog
-    /// </summary>
-    public class ModuleCatalog : IModuleCatalog
+    internal class InternalModuleCatalog : IModuleCatalog
     {
+        public InternalModuleCatalog(Func<string, bool> findModuleFunc)
+        {
+            this.findModuleFunc = findModuleFunc;
+        }
         private readonly List<Type> appModuleTypes = new List<Type>();
         private readonly object m_locker = new object();
         private readonly Dictionary<string, IAppModule> m_modules = new Dictionary<string, IAppModule>();
         private volatile bool isReadonly;
+        private Func<string, bool> findModuleFunc;
 
         /// <inheritdoc/>
         public bool IsReadonly => isReadonly;
@@ -88,13 +90,24 @@ namespace Baboon
                 {
                     foreach (var path in Directory.GetFiles(this.ModulesDirPath, "*.dll", SearchOption.AllDirectories))
                     {
+                        if (!findModuleFunc.Invoke(path))
+                        {
+                            continue;
+                        }
                         var assembly = Assembly.LoadFrom(Path.GetFullPath(path));
 
-                        var moduleTypes = assembly.ExportedTypes.Where(type => typeof(IAppModule).IsAssignableFrom(type));
+                        var moduleTypes = assembly.ExportedTypes;
 
                         foreach (var moduleType in moduleTypes)
                         {
-                            this.Add(moduleType);
+                            if (moduleType.IsAbstract || moduleType.IsInterface || moduleType.IsNotPublic)
+                            {
+                                continue;
+                            }
+                            if (typeof(IAppModule).IsAssignableFrom(moduleType))
+                            {
+                                this.Add(moduleType);
+                            }
                         }
                     }
                 }

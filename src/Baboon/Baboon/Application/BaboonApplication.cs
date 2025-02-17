@@ -1,8 +1,10 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Threading;
 using TouchSocket.Core;
@@ -72,10 +74,7 @@ namespace Baboon
             this.Logger?.LogError(ex, ex.Message);
         }
 
-        /// <summary>
         /// <inheritdoc/>
-        /// </summary>
-        /// <param name="e"></param>
         protected override sealed void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -83,7 +82,7 @@ namespace Baboon
             var builder = this.CreateApplicationBuilder(e);
 
             #region 配置、加载插件
-            var moduleCatalog = new ModuleCatalog();
+            var moduleCatalog = new InternalModuleCatalog(FindModule);
             this.ConfigureModuleCatalog(moduleCatalog);
             moduleCatalog.Build();
             #endregion
@@ -113,6 +112,7 @@ namespace Baboon
             var host = builder.Build();
             this.AppHost = host;
 
+            Ioc.Default.ConfigureServices(host.Services);
             this.Startup(new AppModuleStartupEventArgs(host));
 
             foreach (var appModule in moduleCatalog.GetAppModules())
@@ -122,6 +122,12 @@ namespace Baboon
 
             this.MainWindow = this.CreateMainWindow();
             this.MainWindow.Show();
+        }
+
+        protected virtual bool FindModule(string path)
+        {
+            var name = Path.GetFileNameWithoutExtension(path);
+            return name.EndsWith("Module");
         }
 
         protected abstract void Startup(AppModuleStartupEventArgs e);

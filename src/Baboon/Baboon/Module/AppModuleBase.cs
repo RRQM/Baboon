@@ -23,16 +23,21 @@ namespace Baboon
         public virtual IServiceProvider ServiceProvider => serviceScope.ServiceProvider;
 
         /// <inheritdoc/>
-        public virtual void Initialize(BaboonApplication application, AppModuleInitEventArgs e)
+        public void Initialize(BaboonApplication application, AppModuleInitEventArgs e)
         {
-
+            this.OnInitialize(application, e);
         }
 
         /// <inheritdoc/>
-        public virtual void Startup(BaboonApplication application, AppModuleStartupEventArgs e)
+        public void Startup(BaboonApplication application, AppModuleStartupEventArgs e)
         {
             this.serviceScope = e.AppHost.Services.CreateScope();
+            this.OnStartup(application, e);
         }
+
+        protected abstract void OnInitialize(BaboonApplication application, AppModuleInitEventArgs e);
+
+        protected abstract void OnStartup(BaboonApplication application, AppModuleStartupEventArgs e);
 
         /// <inheritdoc/>
         protected override void SafetyDispose(bool disposing)
