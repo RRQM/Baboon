@@ -52,7 +52,7 @@ namespace SatHello.Module
             });
 
 
-            MessageBox.Show("Hello");
+            MessageBox.Show("Hello дё©Иря╪сть");
         }
     }
 }

@@ -1,0 +1,29 @@
+﻿<Project>
+	<PropertyGroup>
+		<Version>0.0.1</Version>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<LangVersion>latest</LangVersion>
+		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+		<BaseOutputPath>..\Build</BaseOutputPath>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<NoWarn>IDE0290;IDE0090;IDE0305;IDE0028;IDE0300;IDE0130;IDE0057</NoWarn>
+		<GenerateSatelliteAssemblies>true</GenerateSatelliteAssemblies>
+		<GenerateSatelliteAssembliesCore>true</GenerateSatelliteAssembliesCore>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(MSBuildProjectName.EndsWith(`Module`))'">
+		<IsModule>true</IsModule>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(IsModule)'==true">
+		<OutputPath>$(BaseOutputPath)\$(Configuration)\Modules\$(MSBuildProjectName)</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(IsModule)'!=true">
+		<OutputPath>$(BaseOutputPath)\$(Configuration)</OutputPath>
+	</PropertyGroup>
+</Project>

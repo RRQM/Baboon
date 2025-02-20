@@ -1,7 +1,4 @@
 ﻿using Baboon.Wpf.ViewModels;
-using Microsoft.Extensions.DependencyInjection;
-using SatHello.Module;
-using System.ComponentModel;
 using System.Windows;
 using TouchSocket.Core;
 
@@ -30,8 +27,7 @@ namespace Baboon.Wpf
 
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {
-            //以类型注册
-            moduleCatalog.Add<SayHelloModule>();
+            //可以直接注册
         }
 
         protected override void OnException(Exception ex)
