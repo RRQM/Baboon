@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using TouchSocket.Core;
@@ -23,21 +24,21 @@ namespace Baboon
         public virtual IServiceProvider ServiceProvider => serviceScope.ServiceProvider;
 
         /// <inheritdoc/>
-        public void Initialize(BaboonApplication application, AppModuleInitEventArgs e)
+        public async Task InitializeAsync(BaboonApplication application, AppModuleInitEventArgs e)
         {
-            this.OnInitialize(application, e);
+            await this.OnInitializeAsync(application, e);
         }
 
         /// <inheritdoc/>
-        public void Startup(BaboonApplication application, AppModuleStartupEventArgs e)
+        public async Task StartupAsync(BaboonApplication application, AppModuleStartupEventArgs e)
         {
             this.serviceScope = e.AppHost.Services.CreateScope();
-            this.OnStartup(application, e);
+            await this.OnStartupAsync(application, e);
         }
 
-        protected abstract void OnInitialize(BaboonApplication application, AppModuleInitEventArgs e);
+        protected abstract Task OnInitializeAsync(BaboonApplication application, AppModuleInitEventArgs e);
 
-        protected abstract void OnStartup(BaboonApplication application, AppModuleStartupEventArgs e);
+        protected abstract Task OnStartupAsync(BaboonApplication application, AppModuleStartupEventArgs e);
 
         /// <inheritdoc/>
         protected override void SafetyDispose(bool disposing)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace Baboon
@@ -18,10 +19,10 @@ namespace Baboon
         /// </summary>
         ResourceDictionary Resources { get;}
 
-        void Initialize(BaboonApplication application, AppModuleInitEventArgs e);
+        Task InitializeAsync(BaboonApplication application, AppModuleInitEventArgs e);
 
         IServiceProvider ServiceProvider { get; }
 
-        void Startup(BaboonApplication application, AppModuleStartupEventArgs e);
+        Task StartupAsync(BaboonApplication application, AppModuleStartupEventArgs e);
     }
 }

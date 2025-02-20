@@ -17,14 +17,15 @@ namespace Baboon.Wpf
             return this.ServiceProvider.Resolve<MainWindow>();
         }
 
-        protected override void Startup(AppModuleStartupEventArgs e)
+        protected override Task StartupAsync(AppModuleStartupEventArgs e)
         {
-            
+            return Task.CompletedTask;
         }
 
-        protected override void Initialize(AppModuleInitEventArgs e)
+        protected override Task InitializeAsync(AppModuleInitEventArgs e)
         {
             e.Services.AddSingletonView<MainWindow, MainViewModel>();
+            return Task.CompletedTask;
         }
 
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)

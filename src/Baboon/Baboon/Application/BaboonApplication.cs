@@ -1,10 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using TouchSocket.Core;
@@ -63,7 +65,13 @@ namespace Baboon
         /// <returns></returns>
         protected abstract Window CreateMainWindow();
 
-        protected abstract void Initialize(AppModuleInitEventArgs e);
+        protected virtual bool FindModule(string path)
+        {
+            var name = Path.GetFileNameWithoutExtension(path);
+            return name.EndsWith("Module");
+        }
+
+        protected abstract Task InitializeAsync(AppModuleInitEventArgs e);
 
         /// <summary>
         /// 在异常的时候
@@ -74,63 +82,27 @@ namespace Baboon
             this.Logger?.LogError(ex, ex.Message);
         }
 
+        protected override async void OnExit(ExitEventArgs e)
+        {
+            var moduleCatalog = this.ServiceProvider.GetService<IModuleCatalog>();
+            foreach (var appModule in moduleCatalog.GetAppModules())
+            {
+                appModule.SafeDispose();
+            }
+            await this.AppHost.StopAsync();
+            base.OnExit(e);
+        }
+
         /// <inheritdoc/>
-        protected override sealed void OnStartup(StartupEventArgs e)
+        protected override sealed async void OnStartup(StartupEventArgs e)
         {
+            MainThreadTaskFactory.Initialize();
+
             base.OnStartup(e);
-
-            var builder = this.CreateApplicationBuilder(e);
-
-            #region 配置、加载插件
-            var moduleCatalog = new InternalModuleCatalog(FindModule);
-            this.ConfigureModuleCatalog(moduleCatalog);
-            moduleCatalog.Build();
-            #endregion
-
-            #region 注册服务
-
-            builder.Services.AddSingleton<IModuleCatalog>(moduleCatalog);
-            builder.Services.AddSingleton(this);
-
-            this.Initialize(new AppModuleInitEventArgs(e.Args, builder.Services));
-            #endregion 注册
-
-           
-
-
-            foreach (var appModule in moduleCatalog.GetAppModules())
-            {
-                var resources = appModule.Resources;
-                if (resources != null)
-                {
-                    this.Resources.MergedDictionaries.Add(resources);
-                }
-
-                appModule.Initialize(this, new AppModuleInitEventArgs(e.Args, builder.Services));
-            }
-
-            var host = builder.Build();
-            this.AppHost = host;
-
-            Ioc.Default.ConfigureServices(host.Services);
-            this.Startup(new AppModuleStartupEventArgs(host));
-
-            foreach (var appModule in moduleCatalog.GetAppModules())
-            {
-                appModule.Startup(this, new AppModuleStartupEventArgs(host));
-            }
-
-            this.MainWindow = this.CreateMainWindow();
-            this.MainWindow.Show();
+            await PrivateOnStartupAsync(e);
         }
 
-        protected virtual bool FindModule(string path)
-        {
-            var name = Path.GetFileNameWithoutExtension(path);
-            return name.EndsWith("Module");
-        }
-
-        protected abstract void Startup(AppModuleStartupEventArgs e);
+        protected abstract Task StartupAsync(AppModuleStartupEventArgs e);
 
         private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
@@ -156,6 +128,55 @@ namespace Baboon
             {
                 this.OnException(ex);
             }
+        }
+
+        private async Task PrivateOnStartupAsync(StartupEventArgs e)
+        {
+            var builder = this.CreateApplicationBuilder(e);
+
+            #region 配置、加载插件
+
+            var moduleCatalog = new InternalModuleCatalog(FindModule);
+            this.ConfigureModuleCatalog(moduleCatalog);
+            moduleCatalog.Build();
+
+            #endregion 配置、加载插件
+
+            #region 注册服务
+
+            builder.Services.AddSingleton<IModuleCatalog>(moduleCatalog);
+            builder.Services.AddSingleton(this);
+
+            await this.InitializeAsync(new AppModuleInitEventArgs(e.Args, builder.Services));
+
+            #endregion 注册服务
+
+            foreach (var appModule in moduleCatalog.GetAppModules())
+            {
+                var resources = appModule.Resources;
+                if (resources != null)
+                {
+                    this.Resources.MergedDictionaries.Add(resources);
+                }
+
+                await appModule.InitializeAsync(this, new AppModuleInitEventArgs(e.Args, builder.Services));
+            }
+
+            var host = builder.Build();
+            this.AppHost = host;
+
+            Ioc.Default.ConfigureServices(host.Services);
+            await this.StartupAsync(new AppModuleStartupEventArgs(host));
+
+            foreach (var appModule in moduleCatalog.GetAppModules())
+            {
+                await appModule.StartupAsync(this, new AppModuleStartupEventArgs(host));
+            }
+
+            await host.StartAsync();
+
+            this.MainWindow = this.CreateMainWindow();
+            this.MainWindow.Show();
         }
     }
 }
