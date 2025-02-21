@@ -1,4 +1,5 @@
-﻿using Baboon.Wpf.ViewModels;
+using Baboon.Wpf.MyRegions;
+using Baboon.Wpf.ViewModels;
 using System.IO;
 using System.Windows;
 using TouchSocket.Core;
@@ -30,6 +31,8 @@ namespace Baboon.Wpf
 
             //注册单例模式的View和ViewModel
             e.Services.AddSingletonView<MainWindow, MainViewModel>();
+
+            e.Services.AddSingletonNavigate<RegionControl, RegionControlViewModel>("RegionControl");
             return Task.CompletedTask;
         }
 

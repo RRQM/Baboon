@@ -1,4 +1,4 @@
-﻿using Baboon.Mvvm;
+using Baboon.Mvvm;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
@@ -14,11 +14,13 @@ namespace Baboon.Wpf.ViewModels
     {
         private readonly IModuleCatalog m_moduleCatalog;
 
-        public MainViewModel(IModuleCatalog moduleCatalog)
+        public MainViewModel(IModuleCatalog moduleCatalog, IRegionManager regionManager)
         {
             this.ThrowErrorCommand = new RelayCommand(this.ThrowError);
             this.SayHelloCommand = new RelayCommand(SayHello);
             this.m_moduleCatalog = moduleCatalog;
+
+            //regionManager.RequestNavigate("mainRoot", "SayHello");
         }
 
 
@@ -41,7 +43,7 @@ namespace Baboon.Wpf.ViewModels
                 MessageBox.Show("没有找到模块");
             }
 
-            
+
         }
 
         #endregion

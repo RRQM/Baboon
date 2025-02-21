@@ -6,21 +6,31 @@ public partial class Form1 : Form
 {
     public Form1()
     {
-        var ssss = Thread.CurrentThread;
-        var ss = SynchronizationContext.Current;
         InitializeComponent();
-
-        var s22s = SynchronizationContext.Current;
     }
 
     private async void Form1_Load(object sender, EventArgs e)
     {
         await Task.Run(async () =>
         {
+            //æ¨¡æ‹Ÿè€—æ—¶æ“ä½œ
+            for (int i = 0; i < 1000; i++)
+            {
+                Debug.WriteLine(i);
+            }
+
+            //åˆ‡æ¢åˆ°ä¸»çº¿ç¨‹
+            await MainThreadTaskFactory.SwitchToMainThreadAsync();
+
+            //æ›´æ–°UI
+            this.Text = "Hello";
+        });
+        await Task.Run(async () =>
+        {
             //this.Text = "1132";
             for (int i = 0; i < 10; i++)
             {
-                Debug.WriteLine("ÕâÀïÊÇÏß³Ì³ØÏß³ÌÖ´ĞĞ" + Thread.CurrentThread.ManagedThreadId);
+                Debug.WriteLine("è¿™é‡Œæ˜¯çº¿ç¨‹æ± çº¿ç¨‹æ‰§è¡Œ" + Thread.CurrentThread.ManagedThreadId);
             }
             using (CancellationTokenSource tokenSource = new CancellationTokenSource(2000))
             {
@@ -30,12 +40,12 @@ public partial class Form1 : Form
                 {
                     await MainThreadTaskFactory.SwitchToMainThreadAsync(tokenSource.Token);
                     this.Text = "1111";
-                    Debug.WriteLine("ÕâÀïÊÇÖ÷Ïß³ÌÖ´ĞĞ" + Thread.CurrentThread.ManagedThreadId);
+                    Debug.WriteLine("è¿™é‡Œæ˜¯ä¸»çº¿ç¨‹æ‰§è¡Œ" + Thread.CurrentThread.ManagedThreadId);
 
                     await MainThreadTaskFactory.ReleaseMainThreadAsync();
-                    Debug.WriteLine("Ö÷Ïß³ÌÖ®ºóÖ´ĞĞ" + Thread.CurrentThread.ManagedThreadId);
+                    Debug.WriteLine("ä¸»çº¿ç¨‹ä¹‹åæ‰§è¡Œ" + Thread.CurrentThread.ManagedThreadId);
 
-                    //ÏÂÃæµÄÉèÖÃÓ¦¸Ã²»»áÉúĞ§£¬ÒòÎªÊÇÔÚÆäËûÏß³Ì²Ù×÷µÄ
+                    //ä¸‹é¢çš„è®¾ç½®åº”è¯¥ä¸ä¼šç”Ÿæ•ˆï¼Œå› ä¸ºæ˜¯åœ¨å…¶ä»–çº¿ç¨‹æ“ä½œçš„
                     this.Text = "2222";
                 }
                 catch (Exception ex)

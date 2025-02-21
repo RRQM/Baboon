@@ -157,53 +157,138 @@ protected override bool FindModule(string path)
  }
 ```
 
-## 主线程切换
+## 五、使用IOC
 
-Baboon提供了一个简单的线程切换的方法。来方便在子线程中切换到主线程。
+Baboon使用了Microsoft.Extensions.DependencyInjection作为IOC容器。并且规范了使用时机。
 
+### 5.1 注册服务
 
-
-```
-```
-
-#### Mvvm
-
-Baboon简单的封装了基本的Mvvm框架，基本能满足使用。
-
-【Cammand】
-
-ExecuteCommand类。
-
-【ViewModel】
-
-ObservableObject和ViewModelBase类。
-
-【容器注册View并绑定】
+在主程序中，或者是模块中，重写InitializeAsync方法。即可注册服务。
 
 ```
-public partial class App : BaboonApplication
+protected override Task InitializeAsync(AppModuleInitEventArgs e)
 {
-    ...
-    protected override void RegisterTypes(IContainer container)
-    {
-        container.RegisterSingletonView<MainWindow, MainViewModel>();
-    }
+    e.Services.AddSingleton<Form1>();
+    return Task.CompletedTask;
 }
 ```
 
-【绑定事件触发器】
+### 5.2 获取服务
 
-使用EventAction实现。
+在主程序中，或者是模块中，重写StartupAsync方法。即可获取服务。
+
+```
+protected override Task StartupAsync(AppModuleStartupEventArgs e)
+{
+    var form1 = e.Services.GetRequiredService<Form1>();
+    return Task.CompletedTask;
+}
+```
 
 
+## 六、主线程切换
+
+Baboon提供了一个简单的线程切换的方法。可以很方便的在子线程中切换到主线程，并执行一些UI操作。
+
+>例如：
+>我们有以下需求：
+>在主窗体加载事件中，需要使用子线程，执行一些耗时的操作。执行完成后，需要把主窗体的Title修改为“Hello”。
+
+那么在wpf中你只需要这样写：
+
+```
+private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+{
+    //切换到子线程
+    await Task.Run(async () =>
+    {
+        //模拟耗时操作
+        for (int i = 0; i < 1000; i++)
+        {
+            Debug.WriteLine(i);
+        }
+
+        //切换到主线程
+        await MainThreadTaskFactory.SwitchToMainThreadAsync();
+
+        //更新UI
+        this.Title = "Hello";
+    });
+}
+```
+
+在Winform中，你只需要这样写：
+
+```
+private async void Form1_Load(object sender, EventArgs e)
+{
+    //切换到子线程
+    await Task.Run(async () =>
+    {
+        //模拟耗时操作
+        for (int i = 0; i < 1000; i++)
+        {
+            Debug.WriteLine(i);
+        }
+
+        //切换到主线程
+        await MainThreadTaskFactory.SwitchToMainThreadAsync();
+
+        //更新UI
+        this.Text = "Hello";
+    });
+}
+```
+
+## 七、Wpf相关操作
+
+### 7.1 注册时绑定View和ViewModel
+
+Baboon提供了一个简单的方法，来注册View和ViewModel。
+
+```
+e.Services.AddSingletonView<MainWindow, MainViewModel>();
+```
+
+### 7.2 区域导航
+
+Baboon提供了一个简单的区域导航的方法。
+
+首先，需要在主窗体的所需布局中，添加一个ContentControl，命名为contentRoot，作为导航的显示区域。
 
 
+```
+<ContentControl x:Name="contentRoot"/>
+```
 
+然后，在主窗体的构造函数中，注册区域导航。
 
+```
+public MainWindow(IRegionManager regionManager)
+{
+    InitializeComponent();
+    regionManager.AddRoot("mainRoot",this.contentRoot);
+}
+```
 
-#### 参与贡献
+然后创建一个基本的View和ViewModel。
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request 
+例如：RegionControl和RegionControlViewModel。
+
+然后需要注册导航。此处使用tag为“RegionControl”来标识。
+
+```
+e.Services.AddSingletonNavigate<RegionControl, RegionControlViewModel>("RegionControl");
+```
+
+假如，我们想在MainViewModel中导航到RegionControl到`mainRoot`。
+
+那只需要在MainViewModel中注入IRegionManager，然后在MainViewModel的构造函数中，导航到RegionControl。
+
+```
+public MainViewModel(IRegionManager regionManager)
+{
+    this.regionManager.RequestNavigate("mainRoot", "RegionControl");
+}
+
+```
