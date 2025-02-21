@@ -10,15 +10,9 @@ namespace Baboon;
 
 public static class MainThreadTaskFactory
 {
-    private static readonly Thread mainThread;
-    private static readonly SynchronizationContext mainThreadSyncContext;
+    private static Thread mainThread;
+    private static SynchronizationContext mainThreadSyncContext;
     private static bool isInitialized;
-
-    static MainThreadTaskFactory()
-    {
-        mainThreadSyncContext = SynchronizationContext.Current;
-        mainThread= Thread.CurrentThread;
-    }
 
     public static bool IsInitialized { get => isInitialized; }
 
@@ -33,6 +27,8 @@ public static class MainThreadTaskFactory
             throw new InvalidOperationException();
         }
         isInitialized = true;
+        mainThreadSyncContext = SynchronizationContext.Current;
+        mainThread = Thread.CurrentThread;
     }
 
     public static ReleaseMainThreadAwaitable ReleaseMainThreadAsync()

@@ -2,6 +2,7 @@
 using Baboon;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Forms;
 
 namespace SatHello.Module
 {
@@ -14,14 +15,18 @@ namespace SatHello.Module
 
         public override ModuleDescription Description { get; }
 
-        protected override Task OnInitializeAsync(BaboonApplication application, AppModuleInitEventArgs e)
+        protected override Task OnInitializeAsync(IApplication application, AppModuleInitEventArgs e)
         {
+            Form form = new Form();
             return Task.CompletedTask;
         }
 
-        protected override async Task OnStartupAsync(BaboonApplication application, AppModuleStartupEventArgs e)
+        protected override async Task OnStartupAsync(IApplication application, AppModuleStartupEventArgs e)
         {
             Debug.WriteLine("线程Id" + Thread.CurrentThread.ManagedThreadId);
+
+            await Task.Delay(1000);
+
             await Task.Run(async () =>
             {
                 for (int i = 0; i < 10; i++)
@@ -52,7 +57,7 @@ namespace SatHello.Module
             });
 
 
-            MessageBox.Show("Hello 模块已加载");
+            System.Windows.MessageBox.Show("Hello 模块已加载");
         }
     }
 }

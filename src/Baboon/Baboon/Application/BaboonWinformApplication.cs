@@ -3,46 +3,70 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Diagnostics;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Threading;
 using TouchSocket.Core;
 
 namespace Baboon
 {
-    /// <summary>
-    /// 由Baboon提供的根应用程序。
-    /// <para>
-    /// 内部已经做了异常处理、日志记录、模块注册等功能。
-    /// </para>
-    /// </summary>
-    public abstract class BaboonApplication : Application
+    public abstract class BaboonWinformApplication :IApplication
     {
-        /// <summary>
-        /// 由Baboon提供的根应用程序。
-        /// <para>
-        /// 内部已经做了异常处理、日志记录、模块注册等功能。
-        /// </para>
-        /// </summary>
-        protected BaboonApplication()
+        protected BaboonWinformApplication()
         {
             #region 异常处理
 
-            //UI线程未捕获异常处理事件
-            this.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(this.App_DispatcherUnhandledException);
-
             //非UI线程未捕获异常处理事件
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(this.CurrentDomain_UnhandledException);
+            Application.ThreadException += Application_ThreadException;
 
             #endregion 异常处理
+
+            Application.ApplicationExit += Application_ApplicationExit;
+            Application.Idle += Application_Idle;
+
+            ApplicationConfiguration();
+        }
+
+        private void Application_Idle(object sender, EventArgs e)
+        {
+
         }
 
         public IHost AppHost { get; private set; }
-        public ILogger<BaboonApplication> Logger => this.ServiceProvider.GetService<ILogger<BaboonApplication>>();
+
+        public ILogger<BaboonWpfApplication> Logger => this.ServiceProvider.GetService<ILogger<BaboonWpfApplication>>();
+
+        public Form MainForm { get; private set; }
+
         public IServiceProvider ServiceProvider => AppHost?.Services;
+
+        public async Task RunAsync(string[] args)
+        {
+            await PrivateOnStartupAsync(args);
+        }
+
+        public async Task RunAsync()
+        {
+            await this.RunAsync([]);
+        }
+
+        protected virtual void ApplicationConfiguration()
+        {
+            global::System.Windows.Forms.Application.EnableVisualStyles();
+            global::System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
+
+#if NET6_0_OR_GREATER
+            global::System.Windows.Forms.Application.SetHighDpiMode(HighDpiMode.SystemAware);
+#endif
+
+        }
 
         /// <summary>
         /// 配置模块
@@ -52,9 +76,9 @@ namespace Baboon
         {
         }
 
-        protected virtual HostApplicationBuilder CreateApplicationBuilder(StartupEventArgs e)
+        protected virtual HostApplicationBuilder CreateApplicationBuilder(string[] args)
         {
-            var builder = Host.CreateApplicationBuilder(e.Args);
+            var builder = Host.CreateApplicationBuilder(args);
 
             return builder;
         }
@@ -63,7 +87,7 @@ namespace Baboon
         /// 获取主窗体
         /// </summary>
         /// <returns></returns>
-        protected abstract Window CreateMainWindow();
+        protected abstract Form CreateMainForm();
 
         protected virtual bool FindModule(string path)
         {
@@ -82,7 +106,9 @@ namespace Baboon
             this.Logger?.LogError(ex, ex.Message);
         }
 
-        protected override async void OnExit(ExitEventArgs e)
+        protected abstract Task StartupAsync(AppModuleStartupEventArgs e);
+
+        private async void Application_ApplicationExit(object sender, EventArgs e)
         {
             var moduleCatalog = this.ServiceProvider.GetService<IModuleCatalog>();
             foreach (var appModule in moduleCatalog.GetAppModules())
@@ -90,38 +116,18 @@ namespace Baboon
                 appModule.SafeDispose();
             }
             await this.AppHost.StopAsync();
-            base.OnExit(e);
         }
 
-        /// <inheritdoc/>
-        protected override sealed async void OnStartup(StartupEventArgs e)
+        private void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
         {
-            MainThreadTaskFactory.Initialize();
-
-            base.OnStartup(e);
-            await PrivateOnStartupAsync(e);
-        }
-
-        protected abstract Task StartupAsync(AppModuleStartupEventArgs e);
-
-        private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
-        {
-            try
-            {
-                e.Handled = true; //把 Handled 属性设为true，表示此异常已处理，程序可以继续运行，不会强制退出
-                this.OnException(e.Exception);
-            }
-            catch
-            {
-                this.Shutdown(-1);
-            }
+            this.OnException(e.Exception);
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             if (e.IsTerminating)
             {
-                this.Shutdown(-1);
+                Application.Exit();
                 return;
             }
             if (e.ExceptionObject is Exception ex)
@@ -130,9 +136,9 @@ namespace Baboon
             }
         }
 
-        private async Task PrivateOnStartupAsync(StartupEventArgs e)
+        private async Task PrivateOnStartupAsync(string[] args)
         {
-            var builder = this.CreateApplicationBuilder(e);
+            var builder = this.CreateApplicationBuilder(args);
 
             #region 配置、加载插件
 
@@ -147,19 +153,13 @@ namespace Baboon
             builder.Services.AddSingleton<IModuleCatalog>(moduleCatalog);
             builder.Services.AddSingleton(this);
 
-            await this.InitializeAsync(new AppModuleInitEventArgs(e.Args, builder.Services));
+            await this.InitializeAsync(new AppModuleInitEventArgs(args, builder.Services));
 
             #endregion 注册服务
 
             foreach (var appModule in moduleCatalog.GetAppModules())
             {
-                var resources = appModule.Resources;
-                if (resources != null)
-                {
-                    this.Resources.MergedDictionaries.Add(resources);
-                }
-
-                await appModule.InitializeAsync(this, new AppModuleInitEventArgs(e.Args, builder.Services));
+                await appModule.InitializeAsync(this, new AppModuleInitEventArgs(args, builder.Services));
             }
 
             var host = builder.Build();
@@ -174,9 +174,10 @@ namespace Baboon
             }
 
             await host.StartAsync();
+            this.MainForm = this.CreateMainForm();
 
-            this.MainWindow = this.CreateMainWindow();
-            this.MainWindow.Show();
+            MainThreadTaskFactory.Initialize();
+            Application.Run(this.MainForm);
         }
     }
 }

@@ -14,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demo", "Demo", "{744923A9-3
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SayHello.Module", "Demo\SayHello.Module\SayHello.Module.csproj", "{74C794A3-895B-5613-1AA8-B251C1F0B54C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Baboon.Winform", "Demo\Baboon.Winform\Baboon.Winform.csproj", "{86C0210E-01CE-4AE9-BB02-435DC1EDA9C3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{74C794A3-895B-5613-1AA8-B251C1F0B54C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74C794A3-895B-5613-1AA8-B251C1F0B54C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74C794A3-895B-5613-1AA8-B251C1F0B54C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86C0210E-01CE-4AE9-BB02-435DC1EDA9C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86C0210E-01CE-4AE9-BB02-435DC1EDA9C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86C0210E-01CE-4AE9-BB02-435DC1EDA9C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86C0210E-01CE-4AE9-BB02-435DC1EDA9C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -39,6 +45,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{67DE8818-9402-4F06-8592-24C170835759} = {744923A9-391F-483E-90E9-DC7F9715E117}
 		{74C794A3-895B-5613-1AA8-B251C1F0B54C} = {744923A9-391F-483E-90E9-DC7F9715E117}
+		{86C0210E-01CE-4AE9-BB02-435DC1EDA9C3} = {744923A9-391F-483E-90E9-DC7F9715E117}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B084965B-CBA4-4C62-B0B3-7AC1A739B585}

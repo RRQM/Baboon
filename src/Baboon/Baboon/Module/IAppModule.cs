@@ -14,15 +14,10 @@ namespace Baboon
         /// </summary>
         ModuleDescription Description { get; }
 
-        /// <summary>
-        /// 资源
-        /// </summary>
-        ResourceDictionary Resources { get;}
-
-        Task InitializeAsync(BaboonApplication application, AppModuleInitEventArgs e);
+        Task InitializeAsync(IApplication application,AppModuleInitEventArgs e);
 
         IServiceProvider ServiceProvider { get; }
 
-        Task StartupAsync(BaboonApplication application, AppModuleStartupEventArgs e);
+        Task StartupAsync(IApplication application,AppModuleStartupEventArgs e);
     }
 }

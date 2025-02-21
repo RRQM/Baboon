@@ -18,27 +18,24 @@ namespace Baboon
         public abstract ModuleDescription Description { get; }
 
         /// <inheritdoc/>
-        public ResourceDictionary Resources { get; protected set; }
-
-        /// <inheritdoc/>
         public virtual IServiceProvider ServiceProvider => serviceScope.ServiceProvider;
 
         /// <inheritdoc/>
-        public async Task InitializeAsync(BaboonApplication application, AppModuleInitEventArgs e)
+        public async Task InitializeAsync(IApplication application, AppModuleInitEventArgs e)
         {
-            await this.OnInitializeAsync(application, e);
+            await this.OnInitializeAsync(application,e);
         }
 
         /// <inheritdoc/>
-        public async Task StartupAsync(BaboonApplication application, AppModuleStartupEventArgs e)
+        public async Task StartupAsync(IApplication application, AppModuleStartupEventArgs e)
         {
             this.serviceScope = e.AppHost.Services.CreateScope();
             await this.OnStartupAsync(application, e);
         }
 
-        protected abstract Task OnInitializeAsync(BaboonApplication application, AppModuleInitEventArgs e);
+        protected abstract Task OnInitializeAsync(IApplication application,AppModuleInitEventArgs e);
 
-        protected abstract Task OnStartupAsync(BaboonApplication application, AppModuleStartupEventArgs e);
+        protected abstract Task OnStartupAsync(IApplication application,AppModuleStartupEventArgs e);
 
         /// <inheritdoc/>
         protected override void SafetyDispose(bool disposing)

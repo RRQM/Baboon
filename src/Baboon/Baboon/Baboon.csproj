@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<TargetFrameworks>net462;net6.0-windows</TargetFrameworks>
 		<UseWPF>true</UseWPF>
+		<UseWindowsForms>true</UseWindowsForms>
 		<PackageTags>wpf;ioc;logger;plugin</PackageTags>
 		<Description>这是一个wpf的，模块化开发的功能库。支持模块加载、下载、更新等。同时包含了本地数据库、本地日志组件等功能。</Description>
 		<ApplicationIcon>logo.ico</ApplicationIcon>
@@ -10,7 +11,7 @@
 		<Title>Baboon</Title>
 		<SignAssembly>True</SignAssembly>
 		<AssemblyOriginatorKeyFile>Baboon.snk</AssemblyOriginatorKeyFile>
-		<Version>2.0.1</Version>
+		<Version>2.0.3</Version>
 		<Company>若汝棋茗</Company>
 		<Copyright>Copyright © 2025 若汝棋茗</Copyright>
 		<PackageProjectUrl>https://gitee.com/rrqm_home/baboon</PackageProjectUrl>

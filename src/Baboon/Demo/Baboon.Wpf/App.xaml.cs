@@ -7,7 +7,7 @@ namespace Baboon.Wpf
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : BaboonApplication
+    public partial class App : BaboonWpfApplication
     {
         protected override Window CreateMainWindow()
         {
