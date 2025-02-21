@@ -10,7 +10,7 @@ namespace SatHello.Module
     {
         public SayHelloModule()
         {
-            this.Description = new ModuleDescription("D7F3274A-2526-43FD-B278-099630BDA33E", "SayHello", new Version(1, 0, 0, 0), "Carywang", "test");
+            this.Description = new ModuleDescription("D7F3274A-2526-43FD-B278-099630BDA33E", "SayHello", new Version(1, 0, 0, 0), "RRQM", "test");
         }
 
         public override ModuleDescription Description { get; }

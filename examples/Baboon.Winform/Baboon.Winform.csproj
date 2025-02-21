@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Baboon\Baboon.csproj" />
+    <PackageReference Include="Baboon" Version="2.0.3" />
   </ItemGroup>
 
 </Project>
