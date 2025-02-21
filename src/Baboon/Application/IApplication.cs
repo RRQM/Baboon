@@ -1,17 +1,26 @@
-﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Baboon
+namespace Baboon;
+
+/// <summary>
+/// 表示应用程序接口。
+/// </summary>
+public interface IApplication
 {
-    public interface IApplication
-    {
-        IHost AppHost { get; }
-        ILogger<BaboonWpfApplication> Logger { get; }
-        IServiceProvider ServiceProvider { get; }
-    }
+    /// <summary>
+    /// 获取应用程序主机。
+    /// </summary>
+    IHost AppHost { get; }
+
+    /// <summary>
+    /// 获取应用程序的日志记录器。
+    /// </summary>
+    ILogger<BaboonWpfApplication> Logger { get; }
+
+    /// <summary>
+    /// 获取应用程序的服务提供者。
+    /// </summary>
+    IServiceProvider ServiceProvider { get; }
 }

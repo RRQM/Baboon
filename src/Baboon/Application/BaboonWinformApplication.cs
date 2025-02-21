@@ -1,183 +1,235 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Threading;
 using TouchSocket.Core;
 
-namespace Baboon
+namespace Baboon;
+
+/// <summary>
+/// 抽象类，表示一个WinForm应用程序。
+/// </summary>
+public abstract class BaboonWinformApplication : IApplication
 {
-    public abstract class BaboonWinformApplication :IApplication
+    /// <summary>
+    /// 构造函数，初始化应用程序并设置异常处理。
+    /// </summary>
+    protected BaboonWinformApplication()
     {
-        protected BaboonWinformApplication()
-        {
-            #region 异常处理
+        #region 异常处理
 
-            //非UI线程未捕获异常处理事件
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(this.CurrentDomain_UnhandledException);
-            Application.ThreadException += Application_ThreadException;
+        //非UI线程未捕获异常处理事件
+        AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(this.CurrentDomain_UnhandledException);
+        Application.ThreadException += this.Application_ThreadException;
 
-            #endregion 异常处理
+        #endregion 异常处理
 
-            Application.ApplicationExit += Application_ApplicationExit;
-            Application.Idle += Application_Idle;
+        Application.ApplicationExit += this.Application_ApplicationExit;
+        Application.Idle += this.Application_Idle;
 
-            ApplicationConfiguration();
-        }
+        this.ApplicationConfiguration();
+    }
 
-        private void Application_Idle(object sender, EventArgs e)
-        {
+    /// <summary>
+    /// 应用程序空闲时的处理。
+    /// </summary>
+    private void Application_Idle(object sender, EventArgs e)
+    {
 
-        }
+    }
 
-        public IHost AppHost { get; private set; }
+    /// <inheritdoc/>
+    public IHost AppHost { get; private set; }
 
-        public ILogger<BaboonWpfApplication> Logger => this.ServiceProvider.GetService<ILogger<BaboonWpfApplication>>();
+    /// <inheritdoc/>
+    public ILogger<BaboonWpfApplication> Logger => this.ServiceProvider.GetService<ILogger<BaboonWpfApplication>>();
 
-        public Form MainForm { get; private set; }
+    /// <summary>
+    /// 获取主窗体。
+    /// </summary>
+    public Form MainForm { get; private set; }
 
-        public IServiceProvider ServiceProvider => AppHost?.Services;
+    /// <inheritdoc/>
+    public IServiceProvider ServiceProvider => this.AppHost?.Services;
 
-        public async Task RunAsync(string[] args)
-        {
-            await PrivateOnStartupAsync(args);
-        }
+    /// <summary>
+    /// 异步运行应用程序。
+    /// </summary>
+    /// <param name="args">启动参数。</param>
+    public async Task RunAsync(string[] args)
+    {
+        await this.PrivateOnStartupAsync(args);
+    }
 
-        public async Task RunAsync()
-        {
-            await this.RunAsync([]);
-        }
+    /// <summary>
+    /// 异步运行应用程序。
+    /// </summary>
+    public async Task RunAsync()
+    {
+        await this.RunAsync(Array.Empty<string>());
+    }
 
-        protected virtual void ApplicationConfiguration()
-        {
-            global::System.Windows.Forms.Application.EnableVisualStyles();
-            global::System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
+    /// <summary>
+    /// 配置应用程序。
+    /// </summary>
+    protected virtual void ApplicationConfiguration()
+    {
+        global::System.Windows.Forms.Application.EnableVisualStyles();
+        global::System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
 
 #if NET6_0_OR_GREATER
-            global::System.Windows.Forms.Application.SetHighDpiMode(HighDpiMode.SystemAware);
+        global::System.Windows.Forms.Application.SetHighDpiMode(HighDpiMode.SystemAware);
 #endif
 
-        }
+    }
 
-        /// <summary>
-        /// 配置模块
-        /// </summary>
-        /// <param name="moduleCatalog"></param>
-        protected virtual void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
+    /// <summary>
+    /// 配置模块目录。
+    /// </summary>
+    /// <param name="moduleCatalog">模块目录。</param>
+    protected virtual void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
+    {
+    }
+
+    /// <summary>
+    /// 创建应用程序构建器。
+    /// </summary>
+    /// <param name="args">启动参数。</param>
+    /// <returns>应用程序构建器。</returns>
+    protected virtual HostApplicationBuilder CreateApplicationBuilder(string[] args)
+    {
+        var builder = Host.CreateApplicationBuilder(args);
+
+        return builder;
+    }
+
+    /// <summary>
+    /// 获取主窗体。
+    /// </summary>
+    /// <returns>主窗体。</returns>
+    protected abstract Form CreateMainForm();
+
+    /// <summary>
+    /// 查找模块。
+    /// </summary>
+    /// <param name="path">模块路径。</param>
+    /// <returns>是否找到模块。</returns>
+    protected virtual bool FindModule(string path)
+    {
+        var name = Path.GetFileNameWithoutExtension(path);
+        return name.EndsWith("Module");
+    }
+
+    /// <summary>
+    /// 初始化应用程序。
+    /// </summary>
+    /// <param name="e">初始化事件参数。</param>
+    /// <returns>异步任务。</returns>
+    protected abstract Task InitializeAsync(AppModuleInitEventArgs e);
+
+    /// <summary>
+    /// 处理异常。
+    /// </summary>
+    /// <param name="ex">异常对象。</param>
+    protected virtual void OnException(Exception ex)
+    {
+        this.Logger?.LogError(ex, ex.Message);
+    }
+
+    /// <summary>
+    /// 启动应用程序。
+    /// </summary>
+    /// <param name="e">启动事件参数。</param>
+    /// <returns>异步任务。</returns>
+    protected abstract Task StartupAsync(AppModuleStartupEventArgs e);
+
+    /// <summary>
+    /// 应用程序退出时的处理。
+    /// </summary>
+    private async void Application_ApplicationExit(object sender, EventArgs e)
+    {
+        var moduleCatalog = this.ServiceProvider.GetService<IModuleCatalog>();
+        foreach (var appModule in moduleCatalog.GetAppModules())
         {
+            appModule.SafeDispose();
         }
+        await this.AppHost.StopAsync();
+    }
 
-        protected virtual HostApplicationBuilder CreateApplicationBuilder(string[] args)
+    /// <summary>
+    /// UI线程未捕获异常处理。
+    /// </summary>
+    private void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
+    {
+        this.OnException(e.Exception);
+    }
+
+    /// <summary>
+    /// 非UI线程未捕获异常处理。
+    /// </summary>
+    private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+    {
+        if (e.IsTerminating)
         {
-            var builder = Host.CreateApplicationBuilder(args);
-
-            return builder;
+            Application.Exit();
+            return;
         }
-
-        /// <summary>
-        /// 获取主窗体
-        /// </summary>
-        /// <returns></returns>
-        protected abstract Form CreateMainForm();
-
-        protected virtual bool FindModule(string path)
+        if (e.ExceptionObject is Exception ex)
         {
-            var name = Path.GetFileNameWithoutExtension(path);
-            return name.EndsWith("Module");
+            this.OnException(ex);
         }
+    }
 
-        protected abstract Task InitializeAsync(AppModuleInitEventArgs e);
+    /// <summary>
+    /// 私有启动方法。
+    /// </summary>
+    /// <param name="args">启动参数。</param>
+    /// <returns>异步任务。</returns>
+    private async Task PrivateOnStartupAsync(string[] args)
+    {
+        var builder = this.CreateApplicationBuilder(args);
 
-        /// <summary>
-        /// 在异常的时候
-        /// </summary>
-        /// <param name="ex"></param>
-        protected virtual void OnException(Exception ex)
+        #region 配置、加载插件
+
+        var moduleCatalog = new InternalModuleCatalog(this.FindModule);
+        this.ConfigureModuleCatalog(moduleCatalog);
+        moduleCatalog.Build();
+
+        #endregion 配置、加载插件
+
+        #region 注册服务
+
+        builder.Services.AddSingleton<IModuleCatalog>(moduleCatalog);
+        builder.Services.AddSingleton(this);
+
+        await this.InitializeAsync(new AppModuleInitEventArgs(args, builder.Services));
+
+        #endregion 注册服务
+
+        foreach (var appModule in moduleCatalog.GetAppModules())
         {
-            this.Logger?.LogError(ex, ex.Message);
+            await appModule.InitializeAsync(this, new AppModuleInitEventArgs(args, builder.Services));
         }
 
-        protected abstract Task StartupAsync(AppModuleStartupEventArgs e);
+        var host = builder.Build();
+        this.AppHost = host;
 
-        private async void Application_ApplicationExit(object sender, EventArgs e)
+        Ioc.Default.ConfigureServices(host.Services);
+        await this.StartupAsync(new AppModuleStartupEventArgs(host));
+
+        foreach (var appModule in moduleCatalog.GetAppModules())
         {
-            var moduleCatalog = this.ServiceProvider.GetService<IModuleCatalog>();
-            foreach (var appModule in moduleCatalog.GetAppModules())
-            {
-                appModule.SafeDispose();
-            }
-            await this.AppHost.StopAsync();
+            await appModule.StartupAsync(this, new AppModuleStartupEventArgs(host));
         }
 
-        private void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
-        {
-            this.OnException(e.Exception);
-        }
+        await host.StartAsync();
+        this.MainForm = this.CreateMainForm();
 
-        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            if (e.IsTerminating)
-            {
-                Application.Exit();
-                return;
-            }
-            if (e.ExceptionObject is Exception ex)
-            {
-                this.OnException(ex);
-            }
-        }
-
-        private async Task PrivateOnStartupAsync(string[] args)
-        {
-            var builder = this.CreateApplicationBuilder(args);
-
-            #region 配置、加载插件
-
-            var moduleCatalog = new InternalModuleCatalog(FindModule);
-            this.ConfigureModuleCatalog(moduleCatalog);
-            moduleCatalog.Build();
-
-            #endregion 配置、加载插件
-
-            #region 注册服务
-
-            builder.Services.AddSingleton<IModuleCatalog>(moduleCatalog);
-            builder.Services.AddSingleton(this);
-
-            await this.InitializeAsync(new AppModuleInitEventArgs(args, builder.Services));
-
-            #endregion 注册服务
-
-            foreach (var appModule in moduleCatalog.GetAppModules())
-            {
-                await appModule.InitializeAsync(this, new AppModuleInitEventArgs(args, builder.Services));
-            }
-
-            var host = builder.Build();
-            this.AppHost = host;
-
-            Ioc.Default.ConfigureServices(host.Services);
-            await this.StartupAsync(new AppModuleStartupEventArgs(host));
-
-            foreach (var appModule in moduleCatalog.GetAppModules())
-            {
-                await appModule.StartupAsync(this, new AppModuleStartupEventArgs(host));
-            }
-
-            await host.StartAsync();
-            this.MainForm = this.CreateMainForm();
-
-            MainThreadTaskFactory.Initialize();
-            Application.Run(this.MainForm);
-        }
+        MainThreadTaskFactory.Initialize();
+        Application.Run(this.MainForm);
     }
 }

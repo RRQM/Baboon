@@ -1,6 +1,5 @@
-﻿namespace Baboon
+namespace Baboon;
+
+public class NavigationContext
 {
-    public class NavigationContext
-    {
-    }
 }

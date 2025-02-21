@@ -1,50 +1,75 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Baboon;
 
+/// <summary>
+/// 主线程任务工厂
+/// </summary>
 public static class MainThreadTaskFactory
 {
-    private static Thread mainThread;
-    private static SynchronizationContext mainThreadSyncContext;
-    private static bool isInitialized;
+    private static Thread s_mainThread;
+    private static SynchronizationContext s_mainThreadSyncContext;
+    private static bool s_isInitialized;
 
-    public static bool IsInitialized { get => isInitialized; }
+    /// <summary>
+    /// 获取是否已初始化
+    /// </summary>
+    public static bool IsInitialized => s_isInitialized;
 
-    public static Thread Thread => mainThread;
+    /// <summary>
+    /// 获取主线程
+    /// </summary>
+    public static Thread Thread => s_mainThread;
 
-    public static SynchronizationContext ThreadSyncContext => mainThreadSyncContext;
+    /// <summary>
+    /// 获取主线程同步上下文
+    /// </summary>
+    public static SynchronizationContext ThreadSyncContext => s_mainThreadSyncContext;
 
+    /// <summary>
+    /// 初始化主线程任务工厂
+    /// </summary>
     public static void Initialize()
     {
-        if (isInitialized)
+        if (s_isInitialized)
         {
             throw new InvalidOperationException();
         }
-        isInitialized = true;
-        mainThreadSyncContext = SynchronizationContext.Current;
-        mainThread = Thread.CurrentThread;
+        s_isInitialized = true;
+        s_mainThreadSyncContext = SynchronizationContext.Current;
+        s_mainThread = Thread.CurrentThread;
     }
 
+    /// <summary>
+    /// 释放主线程异步操作
+    /// </summary>
+    /// <returns>释放主线程的可等待对象</returns>
     public static ReleaseMainThreadAwaitable ReleaseMainThreadAsync()
     {
         return new ReleaseMainThreadAwaitable();
     }
 
+    /// <summary>
+    /// 切换到主线程异步操作
+    /// </summary>
+    /// <param name="cancellationToken">取消令牌</param>
+    /// <returns>切换到主线程的可等待对象</returns>
     public static MainThreadAwaitable SwitchToMainThreadAsync(CancellationToken cancellationToken = default)
     {
         return new MainThreadAwaitable(cancellationToken);
     }
+
+    /// <summary>
+    /// 请求切换到主线程
+    /// </summary>
+    /// <param name="callback">回调操作</param>
     internal static void RequestSwitchToMainThread(Action callback)
     {
-        if (mainThreadSyncContext != null)
+        if (s_mainThreadSyncContext != null)
         {
-            mainThreadSyncContext.Post(_ => callback(), null);
+            s_mainThreadSyncContext.Post(_ => callback(), null);
         }
         else
         {
@@ -52,35 +77,41 @@ public static class MainThreadTaskFactory
         }
     }
 
+    /// <summary>
+    /// 主线程可等待对象
+    /// </summary>
     public readonly struct MainThreadAwaitable
     {
-        private readonly CancellationToken cancellationToken;
+        private readonly CancellationToken m_cancellationToken;
 
         internal MainThreadAwaitable(CancellationToken cancellationToken)
         {
-            this.cancellationToken = cancellationToken;
+            this.m_cancellationToken = cancellationToken;
         }
 
         public MainThreadAwaiter GetAwaiter()
         {
-            return new MainThreadAwaiter(cancellationToken);
+            return new MainThreadAwaiter(this.m_cancellationToken);
         }
     }
 
+    /// <summary>
+    /// 主线程等待者
+    /// </summary>
     public readonly struct MainThreadAwaiter : ICriticalNotifyCompletion
     {
-        private readonly CancellationToken cancellationToken;
+        private readonly CancellationToken m_cancellationToken;
 
         internal MainThreadAwaiter(CancellationToken cancellationToken)
         {
-            this.cancellationToken = cancellationToken;
+            this.m_cancellationToken = cancellationToken;
         }
 
         public bool IsCompleted => false;
 
         public void GetResult()
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            this.m_cancellationToken.ThrowIfCancellationRequested();
         }
 
         public void OnCompleted(Action continuation)
@@ -90,10 +121,13 @@ public static class MainThreadTaskFactory
 
         public void UnsafeOnCompleted(Action continuation)
         {
-            OnCompleted(continuation);
+            this.OnCompleted(continuation);
         }
     }
 
+    /// <summary>
+    /// 释放主线程可等待对象
+    /// </summary>
     public readonly struct ReleaseMainThreadAwaitable
     {
         public ReleaseMainThreadAwaiter GetAwaiter()
@@ -102,6 +136,9 @@ public static class MainThreadTaskFactory
         }
     }
 
+    /// <summary>
+    /// 释放主线程等待者
+    /// </summary>
     public readonly struct ReleaseMainThreadAwaiter : ICriticalNotifyCompletion
     {
         public bool IsCompleted => false;
@@ -118,7 +155,7 @@ public static class MainThreadTaskFactory
 
         public void UnsafeOnCompleted(Action continuation)
         {
-            OnCompleted(continuation);
+            this.OnCompleted(continuation);
         }
     }
 }

@@ -1,6 +1,5 @@
-﻿namespace Baboon
+namespace Baboon;
+
+public interface IConfirmNavigationRequest
 {
-    public interface IConfirmNavigationRequest
-    {
-    }
 }

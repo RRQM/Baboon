@@ -1,7 +1,6 @@
-﻿namespace Baboon.Mvvm
+namespace Baboon.Mvvm;
+
+public interface IEventAction
 {
-    public interface IEventAction
-    {
-        string EventName { get; }
-    }
+    string EventName { get; }
 }

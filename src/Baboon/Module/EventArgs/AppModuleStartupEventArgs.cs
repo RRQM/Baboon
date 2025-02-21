@@ -1,19 +1,24 @@
-﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Baboon
+namespace Baboon;
+
+/// <summary>
+/// 应用模块启动事件参数类
+/// </summary>
+public class AppModuleStartupEventArgs : EventArgs
 {
-   public class AppModuleStartupEventArgs:EventArgs
-    {
-        public IHost AppHost { get;}
+    /// <summary>
+    /// 获取应用主机
+    /// </summary>
+    public IHost AppHost { get; }
 
-        public AppModuleStartupEventArgs(IHost appHost)
-        {
-            AppHost = appHost;
-        }
+    /// <summary>
+    /// 初始化 <see cref="AppModuleStartupEventArgs"/> 类的新实例
+    /// </summary>
+    /// <param name="appHost">应用主机</param>
+    public AppModuleStartupEventArgs(IHost appHost)
+    {
+        this.AppHost = appHost;
     }
 }

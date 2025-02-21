@@ -1,24 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
-namespace Baboon
+namespace Baboon;
+
+internal class InternalResourceService : IResourceService
 {
-    internal class InternalResourceService : IResourceService
+    private readonly BaboonWpfApplication application;
+
+    public InternalResourceService(BaboonWpfApplication baboonWpfApplication)
     {
-        private BaboonWpfApplication application;
+        this.application = baboonWpfApplication;
+    }
 
-        public InternalResourceService(BaboonWpfApplication baboonWpfApplication)
-        {
-            this.application = baboonWpfApplication;
-        }
-
-        public void AddResourceDictionary(ResourceDictionary resourceDictionary)
-        {
-            application.Resources.MergedDictionaries.Add(resourceDictionary);
-        }
+    public void AddResourceDictionary(ResourceDictionary resourceDictionary)
+    {
+        this.application.Resources.MergedDictionaries.Add(resourceDictionary);
     }
 }

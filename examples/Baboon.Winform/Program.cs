@@ -1,4 +1,5 @@
 
+using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
 
 namespace Baboon.Winform;
@@ -11,12 +12,7 @@ internal static class Program
     [STAThread]
     static async Task Main()
     {
-        //// To customize application configuration such as set high DPI settings or default font,
-        //// see https://aka.ms/applicationconfiguration.
-        //ApplicationConfiguration.Initialize();
-        //Application.Run(new Form1());
-        //var ss = Thread.CurrentThread;
-        MyApp myApp = new MyApp();
+        var myApp = new MyApp();
         await myApp.RunAsync();
     }
 
@@ -24,11 +20,12 @@ internal static class Program
     {
         protected override Form CreateMainForm()
         {
-            return new Form1();
+            return this.ServiceProvider.GetRequiredService<Form1>();
         }
 
         protected override Task InitializeAsync(AppModuleInitEventArgs e)
         {
+            e.Services.AddSingleton<Form1>();
             return Task.CompletedTask;
         }
 

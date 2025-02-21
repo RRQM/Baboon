@@ -11,7 +11,7 @@
 		<Title>Baboon</Title>
 		<SignAssembly>True</SignAssembly>
 		<AssemblyOriginatorKeyFile>Baboon.snk</AssemblyOriginatorKeyFile>
-		<Version>2.0.3</Version>
+		<Version>2.0.5</Version>
 		<Company>若汝棋茗</Company>
 		<Copyright>Copyright © 2025 若汝棋茗</Copyright>
 		<PackageProjectUrl>https://gitee.com/rrqm_home/baboon</PackageProjectUrl>
@@ -24,7 +24,8 @@
 		<DocumentationFile></DocumentationFile>
 		<RepositoryUrl>https://gitee.com/rrqm_home/baboon</RepositoryUrl>
 		<PackageReadmeFile>Readme.md</PackageReadmeFile>
-		<LangVersion>13</LangVersion>
+		<LangVersion>latest</LangVersion>
+		<NoWarn>IDE0290;IDE0090;IDE0305;IDE0028;IDE0300;IDE0130;IDE0057</NoWarn>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)'=='Release'">
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -34,7 +35,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="Readme.md" Pack="true" PackagePath="\" />
+		<None Include="..\..\README.md" Link="README.md" Pack="true" PackagePath="\"/>
 		<None Include="LICENSE.txt">
 			<Pack>True</Pack>
 			<PackagePath></PackagePath>
@@ -46,17 +47,9 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-		<PackageReference Include="TouchSocket.Core" Version="3.0.13" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(TargetFramework)'=='net45'">
-		<Reference Include="System.IO.Compression" />
+		<PackageReference Include="TouchSocket.Core" Version="3.0.14" />
 	</ItemGroup>
 
 	<Target Name="CopyNuGetPackage" AfterTargets="Pack" Condition="'$(Configuration)' == 'Release'">

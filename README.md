@@ -1,9 +1,10 @@
 # Baboon
 
-#### 介绍
-这是一个轻量级wpf插件化开发的基础库。它内置了模块化加载、模块化日志记录、模块化本地存储、模块化IOC注册、以及开发Mvvm必要的Command和EventTrigger。
+## 一、介绍
 
-#### 安装教程
+这是一个轻量级wpf和winform的插件化开发的基础库。它内置了模块化加载、模块化日志记录、模块化IOC注册、以及开发wpf时的Mvvm必要的Command和EventTrigger。
+
+## 二、安装教程
 
 nuget安装`Baboon`即可。
 
@@ -11,9 +12,11 @@ nuget安装`Baboon`即可。
 Install-Package Baboon
 ```
 
-#### 使用
+## 三、使用
 
-安装完成以后，需要在App.xaml和.cs中，修改基类继承。
+### 3.1 Wpf使用
+
+在Wpf安装完成以后，需要在`App.xaml`和`App.xaml.cs`中，修改基类继承。
 
 ```
 <baboon:BaboonApplication x:Class="Baboon.Wpf.App"
@@ -27,25 +30,78 @@ Install-Package Baboon
 同时需要在App.xaml.cs中，实现抽象类成员。包括注册容器和创建主窗口。
 
 ```
-public partial class App : BaboonApplication
+public partial class App : BaboonWpfApplication
 {
-    protected override Window CreateShell()
+    protected override Window CreateMainWindow()
     {
-        //创建主窗口
-        return this.Container.Resolve<MainWindow>();
+        return this.ServiceProvider.Resolve<MainWindow>();
     }
 
-    protected override void RegisterTypes(IContainer container)
+    protected override Task StartupAsync(AppModuleStartupEventArgs e)
     {
-        //注册容器
-        container.RegisterSingletonView<MainWindow,MainViewModel>();
+        //程序启动时执行
+        //可以在这里通过ServiceProvider获取服务
+        //this.ServiceProvider.Resolve<MainViewModel>();
+        return Task.CompletedTask;
+    }
+
+    protected override Task InitializeAsync(AppModuleInitEventArgs e)
+    {
+        //程序初始化时执行
+        //可以在这里注册服务
+
+        //注册单例模式的View和ViewModel
+        e.Services.AddSingletonView<MainWindow, MainViewModel>();
+        return Task.CompletedTask;
     }
 }
 ```
 
-#### 新建模块
+### 3.2 Winform使用
 
-新建一个项目，命名为SayHello.Module，添加对`Baboon`的引用。
+在Winform安装完成以后，需要在`Program.cs`中，修改部分逻辑。
+
+首先，需要新建一个类，继承自`BaboonWinformApplication`。
+
+然后重写CreateMainForm和InitializeAsync和StartupAsync。
+
+```
+class MyApp : BaboonWinformApplication
+{
+    protected override Form CreateMainForm()
+    {
+        return this.ServiceProvider.GetRequiredService<Form1>();
+    }
+
+    protected override Task InitializeAsync(AppModuleInitEventArgs e)
+    {
+        e.Services.AddSingleton<Form1>();
+        return Task.CompletedTask;
+    }
+
+    protected override Task StartupAsync(AppModuleStartupEventArgs e)
+    {
+        return Task.CompletedTask;
+    }
+}
+```
+
+然后在Program.cs中，使用下列代码替换Main方法。
+
+```
+[STAThread]
+static async Task Main()
+{
+    var myApp = new MyApp();
+    await myApp.RunAsync();
+}
+```
+
+## 四、使用模块
+
+### 4.1 创建模块
+
+新建一个库项目，命名为SayHello.Module，添加对`Baboon`的引用。
 
 然后新建一个类，命名为SayHelloModule，继承自`AppModuleBase`或实现`IAppModule`接口。
 
@@ -54,140 +110,61 @@ public partial class App : BaboonApplication
 ```
 public class SayHelloModule : AppModuleBase
 {
-    public SayHelloModule(ILoggerFactoryService loggerFactory) : base(loggerFactory)
+    public SayHelloModule()
     {
-       
+        this.Description = new ModuleDescription("D7F3274A-2526-43FD-B278-099630BDA33E", "SayHello", new Version(1, 0, 0, 0), "RRQM", "test");
     }
 
     public override ModuleDescription Description { get; }
 
-    public override ImageSource Icon => throw new NotImplementedException();
-
-    public override void Show(object parameter = null)
+    protected override Task OnInitializeAsync(IApplication application, AppModuleInitEventArgs e)
     {
-        MessageBox.Show("Hello");
+        return Task.CompletedTask;
+    }
+
+    protected override async Task OnStartupAsync(IApplication application, AppModuleStartupEventArgs e)
+    {
+        System.Windows.MessageBox.Show("Hello 模块已加载");
     }
 }
 ```
 
-ModuleDescription是模块描述，可以直接赋值，也可以通过xml文件定义。
+### 4.2 发现、加载模块
 
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<package>
-	<metadata>
-		<Id>SayHello</Id>
-		<DisplayName>SayHello</DisplayName>
-		<Version>1.0.0</Version>
-		<Authors>RRQM</Authors>
-		<Description>会弹出Hello</Description>
-		<!--<CoverImage>logo.png</CoverImage>-->
-		<HasView>false</HasView>
-	</metadata>
-	<module>SayHello.Module.dll</module>
-</package>
-```
+然后将编译好的dll文件，放入到主运行程序的Modules文件夹下。因为Baboon会自动加载Modules文件夹下的所有模块。
 
-#### 注册模块
-
-在App中，重写ConfigureModuleCatalog。可以注册模块。
-
-注册的方式有三种，实例注册、类型注册、构建器注册。
-
-实例注册和类型注册，时直接将模块注册到主程序。这会立刻加载模块，并且需要主程序引用模块。
-
-构建器注册则是只注册模块信息，等需要模块的时候，自动加载模块。并且不需要主程序引用模块。
+如果你的库项目的名称不是以.Module结尾，则需要在主运行程序中（Wpf是BaboonWpfApplication，Winform是BaboonWinformApplication），重写FindModule方法，注册模块。
 
 ```
-public partial class App : BaboonApplication
+protected override bool FindModule(string path)
 {
-    ...
-
-    protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
-    {
-        //以实例注册
-        moduleCatalog.Add(new SayHelloModule(this.Container.Resolve<ILoggerFactoryService>()));
-
-        //以类型注册
-        moduleCatalog.Add(typeof(SayHelloModule));
-
-        //以构建器注册
-        moduleCatalog.Add(new ModuleDescriptionBuilder()
-        {
-            Description = new ModuleDescription(),
-            Module = "",
-            RootDir = ""
-        });
-    }
+    var name = Path.GetFileNameWithoutExtension(path);
+    return name.EndsWith("Module");
 }
 ```
 
-#### 加载、使用模块
+### 4.3 直接加载模块
 
-模块的加载是自动的，即使使用构建器注册的。也会在需要时时机加载模块。
+如果你的模块是直接引用的，则可以直接使用。
 
-使用模块，需要从容器中获得IModuleCatalog。
-
-然后可以Contains(id)的方法，判断是否已注册对应Id的模块。
-
-通过TryGetAppModuleInfo可以获取到模块信息。
-
-appModuleInfo.Loaded属性可以判断当前模块是否已经加载到主程序中。
-
-appModuleInfo.GetApp()即可获取到指定的模块。
+例如：
 
 ```
-internal class MainViewModel : ViewModelBase
-{
-    private readonly IModuleCatalog m_moduleCatalog;
-
-    public MainViewModel(IModuleCatalog moduleCatalog)
-    {
-        this.m_moduleCatalog = moduleCatalog;
-    }
-
-    private void RunSayHello()
-    {
-        if (!this.m_moduleCatalog.Contains("SayHello"))
-        {
-            MessageBox.Show("没有找到模块");
-        }
-
-        if (this.m_moduleCatalog.TryGetAppModuleInfo("SayHello", out var appModuleInfo))
-        {
-            if (!appModuleInfo.Loaded)//没有加载到主程序
-            {
-                if (MessageBox.Show("模块没有加载，是否加载？", "", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                {
-                    var app = appModuleInfo.GetApp();
-
-                    app.Show();
-                }
-            }
-            else
-            {
-                var app = appModuleInfo.GetApp();
-
-                app.Show();
-            }
-        }
-    }
-}
+ protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
+ {
+     //可以直接注册模块
+     //moduleCatalog.Add<SayHelloModule>;
+ }
 ```
 
-#### 模块管理器
+## 主线程切换
 
-使用IModuleManagerService服务，可以实现对模块的快速管理。包括安装、更新、卸载等。
+Baboon提供了一个简单的线程切换的方法。来方便在子线程中切换到主线程。
 
-同时IModuleCatalog也会对存放在Modules文件夹下的所有模块进行注册。但前提是每个模块必须包含一个名为Description.xml的文件。
 
-#### 模块日志
 
-每个模块可以拥有单独的日志记录器。通过IAppModule.Logger即可获得。
-
-#### 模块本地数据库
-
-Baboon集成了LiteDB数据库，并封装了KV键值存储。使用IConfigurationStoreService即可。
+```
+```
 
 #### Mvvm
 
