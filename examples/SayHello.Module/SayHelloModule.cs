@@ -1,5 +1,6 @@
 
 using Baboon;
+using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Forms;
@@ -23,7 +24,11 @@ namespace SatHello.Module
 
         protected override async Task OnStartupAsync(IApplication application, AppModuleStartupEventArgs e)
         {
-            Debug.WriteLine("Ïß³ÌId" + Thread.CurrentThread.ManagedThreadId);
+            var resourceService = this.ServiceProvider.GetRequiredService<IResourceService>();
+
+            resourceService.AddResourceDictionary(new ResourceDictionary());
+
+            Debug.WriteLine("çº¿ç¨‹Id" + Thread.CurrentThread.ManagedThreadId);
 
             await Task.Delay(1000);
 
@@ -31,7 +36,7 @@ namespace SatHello.Module
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    Debug.WriteLine("ÕâÀïÊÇÏß³Ì³ØÏß³ÌÖ´ÐÐ" + Thread.CurrentThread.ManagedThreadId);
+                    Debug.WriteLine("è¿™é‡Œæ˜¯çº¿ç¨‹æ± çº¿ç¨‹æ‰§è¡Œ" + Thread.CurrentThread.ManagedThreadId);
                 }
                 using (CancellationTokenSource tokenSource = new CancellationTokenSource(2000))
                 {
@@ -41,23 +46,23 @@ namespace SatHello.Module
                     {
                         await MainThreadTaskFactory.SwitchToMainThreadAsync(tokenSource.Token);
 
-                        Debug.WriteLine("ÕâÀïÊÇÖ÷Ïß³ÌÖ´ÐÐ" + Thread.CurrentThread.ManagedThreadId);
+                        Debug.WriteLine("è¿™é‡Œæ˜¯ä¸»çº¿ç¨‹æ‰§è¡Œ" + Thread.CurrentThread.ManagedThreadId);
 
                         await MainThreadTaskFactory.ReleaseMainThreadAsync();
-                        Debug.WriteLine("Ö÷Ïß³ÌÖ®ºóÖ´ÐÐ" + Thread.CurrentThread.ManagedThreadId);
+                        Debug.WriteLine("ä¸»çº¿ç¨‹ä¹‹åŽæ‰§è¡Œ" + Thread.CurrentThread.ManagedThreadId);
                     }
                     catch (Exception ex)
                     {
 
-                      
+
                     }
-                    
+
                 }
 
             });
 
 
-            System.Windows.MessageBox.Show("Hello Ä£¿éÒÑ¼ÓÔØ");
+            System.Windows.MessageBox.Show("Hello æ¨¡å—å·²åŠ è½½");
         }
     }
 }
