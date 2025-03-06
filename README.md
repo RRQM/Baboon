@@ -32,17 +32,15 @@ Install-Package Baboon
 ```csharp
 public partial class App : BaboonWpfApplication
 {
-    protected override Window CreateMainWindow()
+    protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
     {
-        return this.ServiceProvider.Resolve<MainWindow>();
+        //可以直接注册模块
+        //moduleCatalog.Add<SayHelloModule>;
     }
 
-    protected override Task StartupAsync(AppModuleStartupEventArgs e)
+    protected override Window CreateMainWindow(IWindowManager windowManager)
     {
-        //程序启动时执行
-        //可以在这里通过ServiceProvider获取服务
-        //this.ServiceProvider.Resolve<MainViewModel>();
-        return Task.CompletedTask;
+        return windowManager.GetWindow<MainWindow>();
     }
 
     protected override Task InitializeAsync(AppModuleInitEventArgs e)
@@ -52,6 +50,14 @@ public partial class App : BaboonWpfApplication
 
         //注册单例模式的View和ViewModel
         e.Services.AddSingletonView<MainWindow, MainViewModel>();
+        return Task.CompletedTask;
+    }
+
+    protected override Task StartupAsync(AppModuleStartupEventArgs e)
+    {
+        //程序启动时执行
+        //可以在这里通过ServiceProvider获取服务
+        //this.ServiceProvider.Resolve<MainViewModel>();
         return Task.CompletedTask;
     }
 }
@@ -68,14 +74,16 @@ public partial class App : BaboonWpfApplication
 ```csharp
 class MyApp : BaboonWinformApplication
 {
-    protected override Form CreateMainForm()
+    protected override Form CreateMainForm(IFormManager formManager)
     {
-        return this.ServiceProvider.GetRequiredService<Form1>();
+        return formManager.GetForm<Form1>();
     }
 
     protected override Task InitializeAsync(AppModuleInitEventArgs e)
     {
-        e.Services.AddSingleton<Form1>();
+        //注意：非必要，不要把Form注册到容器中，不然无法释放内存。
+        //添加服务
+        //e.Services.AddSingleton<>();
         return Task.CompletedTask;
     }
 
