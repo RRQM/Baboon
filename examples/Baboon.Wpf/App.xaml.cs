@@ -1,8 +1,8 @@
 using Baboon.Wpf.MyRegions;
 using Baboon.Wpf.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 using System.IO;
 using System.Windows;
-using TouchSocket.Core;
 
 namespace Baboon.Wpf
 {
@@ -11,17 +11,21 @@ namespace Baboon.Wpf
     /// </summary>
     public partial class App : BaboonWpfApplication
     {
-        protected override Window CreateMainWindow()
+        protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {
-            return this.ServiceProvider.Resolve<MainWindow>();
+            //可以直接注册模块
+            //moduleCatalog.Add<SayHelloModule>;
         }
 
-        protected override Task StartupAsync(AppModuleStartupEventArgs e)
+        protected override Window CreateMainWindow(IWindowManager windowManager)
         {
-            //程序启动时执行
-            //可以在这里通过ServiceProvider获取服务
-            //this.ServiceProvider.Resolve<MainViewModel>();
-            return Task.CompletedTask;
+            return windowManager.GetWindow<MainWindow>();
+        }
+
+        protected override bool FindModule(string path)
+        {
+            var name = Path.GetFileNameWithoutExtension(path);
+            return name.EndsWith("Module");
         }
 
         protected override Task InitializeAsync(AppModuleInitEventArgs e)
@@ -36,12 +40,6 @@ namespace Baboon.Wpf
             return Task.CompletedTask;
         }
 
-        protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
-        {
-            //可以直接注册模块
-            //moduleCatalog.Add<SayHelloModule>;
-        }
-
         protected override void OnException(Exception ex)
         {
             base.OnException(ex);
@@ -49,10 +47,12 @@ namespace Baboon.Wpf
             MessageBox.Show($"异常：{ex.Message}");
         }
 
-        protected override bool FindModule(string path)
+        protected override Task StartupAsync(AppModuleStartupEventArgs e)
         {
-            var name = Path.GetFileNameWithoutExtension(path);
-            return name.EndsWith("Module");
+            //程序启动时执行
+            //可以在这里通过ServiceProvider获取服务
+            //this.ServiceProvider.Resolve<MainViewModel>();
+            return Task.CompletedTask;
         }
     }
 }

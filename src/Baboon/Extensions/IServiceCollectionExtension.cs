@@ -98,4 +98,11 @@ public static class IServiceCollectionExtension
         services.AddSingleton<IWindowManager, WindowManager>();
     }
     #endregion
+
+    #region RegionManager
+    public static void AddRegionManager(this IServiceCollection services)
+    {
+        services.AddSingleton<IRegionManager, RegionManager>();
+    }
+    #endregion
 }

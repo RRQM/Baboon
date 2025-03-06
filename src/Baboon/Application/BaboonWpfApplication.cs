@@ -172,6 +172,8 @@ public abstract class BaboonWpfApplication : Application, IApplication
         builder.Services.AddSingleton<IResourceService>(new InternalResourceService(this));
         builder.Services.AddSingleton(this);
         builder.Services.AddWindowManager();
+        builder.Services.AddRegionManager();
+
         await this.InitializeAsync(new AppModuleInitEventArgs(e.Args, builder.Services));
 
         #endregion 注册服务

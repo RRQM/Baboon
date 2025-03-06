@@ -8,12 +8,12 @@ namespace Baboon;
 
 public class RegionManager : IRegionManager
 {
-    private readonly IServiceProvider m_container;
     private readonly Dictionary<string, ContentControl> m_rootContents = new Dictionary<string, ContentControl>();
-    public RegionManager(IServiceProvider container, IResolver resolver)
+    private readonly IServiceProvider m_serviceProvider;
+
+    public RegionManager(IServiceProvider serviceProvider)
     {
-        this.m_container = container;
-        this.m_container = resolver;
+        this.m_serviceProvider = serviceProvider;
     }
 
     public void AddRoot(string contentRegion, ContentControl rootContent)
@@ -34,6 +34,6 @@ public class RegionManager : IRegionManager
             return;
         }
 
-        contentControl.Content = this.m_container.GetRequiredKeyedService<object>(tag);
+        contentControl.Content = this.m_serviceProvider.GetRequiredKeyedService<object>(tag);
     }
 }

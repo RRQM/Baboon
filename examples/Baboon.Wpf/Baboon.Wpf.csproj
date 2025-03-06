@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Baboon" Version="2.0.5" />
+	  <PackageReference Include="Baboon" Version="3.0.1-build.4" />
 	</ItemGroup>
 
 </Project>

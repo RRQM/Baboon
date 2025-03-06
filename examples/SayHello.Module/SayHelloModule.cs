@@ -24,9 +24,10 @@ namespace SatHello.Module
 
         protected override async Task OnStartupAsync(IApplication application, AppModuleStartupEventArgs e)
         {
-            var resourceService = this.ServiceProvider.GetRequiredService<IResourceService>();
+            //wpf中
+            //var resourceService = this.ServiceProvider.GetRequiredService<IResourceService>();
 
-            resourceService.AddResourceDictionary(new ResourceDictionary());
+            //resourceService.AddResourceDictionary(new ResourceDictionary());
 
             Debug.WriteLine("线程Id" + Thread.CurrentThread.ManagedThreadId);
 

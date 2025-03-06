@@ -22,7 +22,7 @@ namespace Baboon
         {
             if (token == default)
             {
-                var window = ActivatorUtilities.CreateInstance<TWindow>(this.serviceProvider);
+                var window = ActivatorUtilities.GetServiceOrCreateInstance<TWindow>(this.serviceProvider);
                 return window;
             }
             else

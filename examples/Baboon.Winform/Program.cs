@@ -18,14 +18,20 @@ internal static class Program
 
     class MyApp : BaboonWinformApplication
     {
-        protected override Form CreateMainForm()
+        protected override Form CreateMainForm(IFormManager formManager)
         {
-            return this.ServiceProvider.GetRequiredService<Form1>();
+            return formManager.GetForm<Form1>();
         }
+
+        //protected override Form CreateMainForm()
+        //{
+        //    return this.ServiceProvider.GetRequiredService<Form1>();
+        //}
 
         protected override Task InitializeAsync(AppModuleInitEventArgs e)
         {
-            e.Services.AddSingleton<Form1>();
+            //添加服务
+            //e.Services.AddSingleton<>();
             return Task.CompletedTask;
         }
 
