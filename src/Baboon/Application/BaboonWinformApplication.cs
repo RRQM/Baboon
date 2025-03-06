@@ -111,7 +111,7 @@ public abstract class BaboonWinformApplication : IApplication
     /// 获取主窗体。
     /// </summary>
     /// <returns>主窗体。</returns>
-    protected abstract Form CreateMainForm();
+    protected abstract Form CreateMainForm(IFormManager formManager);
 
     /// <summary>
     /// 查找模块。
@@ -205,6 +205,7 @@ public abstract class BaboonWinformApplication : IApplication
 
         builder.Services.AddSingleton<IModuleCatalog>(moduleCatalog);
         builder.Services.AddSingleton(this);
+        builder.Services.AddFormManager();
 
         await this.InitializeAsync(new AppModuleInitEventArgs(args, builder.Services));
 
@@ -227,7 +228,10 @@ public abstract class BaboonWinformApplication : IApplication
         }
 
         await host.StartAsync();
-        this.MainForm = this.CreateMainForm();
+
+        var formManager = this.ServiceProvider.GetRequiredService<IFormManager>();
+
+        this.MainForm = this.CreateMainForm(formManager);
 
         MainThreadTaskFactory.Initialize();
         Application.Run(this.MainForm);

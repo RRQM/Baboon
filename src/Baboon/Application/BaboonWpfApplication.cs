@@ -71,7 +71,7 @@ public abstract class BaboonWpfApplication : Application, IApplication
     /// 获取主窗体
     /// </summary>
     /// <returns></returns>
-    protected abstract Window CreateMainWindow();
+    protected abstract Window CreateMainWindow(IWindowManager windowManager);
 
     /// <summary>
     /// 查找模块。
@@ -171,7 +171,7 @@ public abstract class BaboonWpfApplication : Application, IApplication
         builder.Services.AddSingleton<IModuleCatalog>(moduleCatalog);
         builder.Services.AddSingleton<IResourceService>(new InternalResourceService(this));
         builder.Services.AddSingleton(this);
-
+        builder.Services.AddWindowManager();
         await this.InitializeAsync(new AppModuleInitEventArgs(e.Args, builder.Services));
 
         #endregion 注册服务
@@ -194,7 +194,8 @@ public abstract class BaboonWpfApplication : Application, IApplication
 
         await host.StartAsync();
 
-        this.MainWindow = this.CreateMainWindow();
+        var windowManager = this.ServiceProvider.GetRequiredService<IWindowManager>();
+        this.MainWindow = this.CreateMainWindow(windowManager);
         this.MainWindow.Show();
     }
 }

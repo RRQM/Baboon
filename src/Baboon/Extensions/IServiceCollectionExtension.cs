@@ -83,4 +83,19 @@ public static class IServiceCollectionExtension
             return view;
         });
     }
+
+
+    #region FormManager
+    public static void AddFormManager(this IServiceCollection services)
+    {
+        services.AddSingleton<IFormManager, FormManager>();
+    }
+    #endregion
+
+    #region WindowManager
+    public static void AddWindowManager(this IServiceCollection services)
+    {
+        services.AddSingleton<IWindowManager, WindowManager>();
+    }
+    #endregion
 }
