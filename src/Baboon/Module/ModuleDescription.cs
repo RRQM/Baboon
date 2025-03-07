@@ -11,6 +11,7 @@
 // ------------------------------------------------------------------------------
 
 using System;
+using System.Reflection;
 
 namespace Baboon;
 
@@ -37,27 +38,60 @@ public class ModuleDescription
     }
 
     /// <summary>
+    /// 初始化 <see cref="ModuleDescription"/> 类的新实例。
+    /// </summary>
+    public ModuleDescription()
+    {
+        
+    }
+
+    /// <summary>
     /// 模块唯一Id。用于标识不同的模块。
     /// </summary>
-    public string Id { get; }
+    public string Id { get; init; }
 
     /// <summary>
     /// 显示名称
     /// </summary>
-    public string Name { get; }
+    public string Name { get; init; }
 
     /// <summary>
     /// 版本
     /// </summary>
-    public Version Version { get; }
+    public Version Version { get; init; }
 
     /// <summary>
     /// 作者
     /// </summary>
-    public string Authors { get; }
+    public string Authors { get; init; }
 
     /// <summary>
     /// 描述
     /// </summary>
-    public string Description { get; }
+    public string Description { get; init; }
+
+    /// <summary>
+    /// 从指定程序集中获取模块描述信息
+    /// </summary>
+    /// <param name="assembly">要获取信息的程序集</param>
+    /// <returns>包含程序集信息的 ModuleDescription 实例</returns>
+    public static ModuleDescription FromAssembly(Assembly assembly)
+    {
+        // 获取程序集名称作为Id
+        var id = assembly.GetName().Name;
+
+        // 获取程序集的显示名称
+        var name = assembly.GetCustomAttribute<AssemblyTitleAttribute>()?.Title ?? id;
+
+        // 获取程序集的版本
+        var version = assembly.GetName().Version;
+
+        // 获取程序集的作者
+        var authors = assembly.GetCustomAttribute<AssemblyCompanyAttribute>()?.Company;
+
+        // 获取程序集的描述
+        var description = assembly.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description;
+
+        return new ModuleDescription(id, name, version, authors, description);
+    }
 }
