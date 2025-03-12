@@ -18,10 +18,10 @@ internal static class Program
     ///  The main entry point for the application.
     /// </summary>
     [STAThread]
-    private static async Task Main()
+    private static void Main()
     {
         var myApp = new MyApp();
-        await myApp.RunAsync();
+        myApp.Run();
     }
 
     private class MyApp : BaboonWinformApplication

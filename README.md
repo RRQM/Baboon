@@ -98,10 +98,10 @@ class MyApp : BaboonWinformApplication
 
 ```csharp
 [STAThread]
-static async Task Main()
+static void Main()
 {
     var myApp = new MyApp();
-    await myApp.RunAsync();
+    myApp.Run();
 }
 ```
 

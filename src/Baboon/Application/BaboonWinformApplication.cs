@@ -72,6 +72,7 @@ public abstract class BaboonWinformApplication : IApplication
     /// 异步运行应用程序。
     /// </summary>
     /// <param name="args">启动参数。</param>
+    [Obsolete("此方法可能会使STAThread线程特性失效，所以已被弃用。请使用Run同步方法代替。")]
     public async Task RunAsync(string[] args)
     {
         await this.PrivateOnStartupAsync(args);
@@ -80,9 +81,27 @@ public abstract class BaboonWinformApplication : IApplication
     /// <summary>
     /// 异步运行应用程序。
     /// </summary>
+    [Obsolete("此方法可能会使STAThread线程特性失效，所以已被弃用。请使用Run同步方法代替。")]
     public async Task RunAsync()
     {
         await this.RunAsync(Array.Empty<string>());
+    }
+
+    /// <summary>
+    /// 运行应用程序。
+    /// </summary>
+    /// <param name="args">启动参数。</param>
+    public void Run(params string[] args)
+    {
+        this.PrivateOnStartupAsync(args).GetAwaiter().GetResult();
+    }
+
+    /// <summary>
+    /// 运行应用程序。
+    /// </summary>
+    public void Run()
+    {
+        this.Run(Array.Empty<string>());
     }
 
     /// <summary>
