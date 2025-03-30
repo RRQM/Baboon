@@ -19,12 +19,12 @@ Install-Package Baboon
 在`Wpf`安装完成以后，需要在`App.xaml`和`App.xaml.cs`中，修改基类继承。
 
 ```xml
-<baboon:BaboonApplication x:Class="Baboon.Wpf.App"
+<baboon:BaboonWpfApplication x:Class="Baboon.Wpf.App"
                           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                           xmlns:baboon="clr-namespace:Baboon;assembly=Baboon">
     <Application.Resources />
-</baboon:BaboonApplication>
+</baboon:BaboonWpfApplication>
 ```
 
 同时需要在`App.xaml.cs`中，实现抽象类成员。包括注册容器和创建主窗口。
