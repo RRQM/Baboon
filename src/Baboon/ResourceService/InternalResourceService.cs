@@ -27,4 +27,9 @@ internal class InternalResourceService : IResourceService
     {
         this.application.Resources.MergedDictionaries.Add(resourceDictionary);
     }
+
+    public object TryFindResource(object resourceKey)
+    {
+        return this.application.TryFindResource(resourceKey);
+    }
 }

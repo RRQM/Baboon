@@ -235,7 +235,7 @@ public abstract class BaboonWinformApplication : IApplication
         #region 注册服务
 
         builder.Services.AddSingleton<IModuleCatalog>(moduleCatalog);
-        builder.Services.AddSingleton(this);
+        builder.Services.AddSingleton<IApplication>(this);
         builder.Services.AddFormManager();
 
         await this.InitializeAsync(new AppModuleInitEventArgs(args, builder.Services));

@@ -182,7 +182,7 @@ public abstract class BaboonWpfApplication : Application, IApplication
 
         builder.Services.AddSingleton<IModuleCatalog>(moduleCatalog);
         builder.Services.AddSingleton<IResourceService>(new InternalResourceService(this));
-        builder.Services.AddSingleton(this);
+        builder.Services.AddSingleton<IApplication>(this);
         builder.Services.AddWindowManager();
         builder.Services.AddRegionManager();
 

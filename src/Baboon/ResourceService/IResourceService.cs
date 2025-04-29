@@ -17,4 +17,5 @@ namespace Baboon;
 public interface IResourceService
 {
     void AddResourceDictionary(ResourceDictionary resourceDictionary);
+    object TryFindResource(object resourceKey);
 }
