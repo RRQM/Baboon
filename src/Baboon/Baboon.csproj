@@ -11,7 +11,7 @@
 		<Title>Baboon</Title>
 		<SignAssembly>True</SignAssembly>
 		<AssemblyOriginatorKeyFile>Baboon.snk</AssemblyOriginatorKeyFile>
-		<Version>3.1.5</Version>
+		<Version>3.1.6</Version>
 		<Company>若汝棋茗</Company>
 		<Copyright>Copyright © 2025 若汝棋茗</Copyright>
 		<PackageProjectUrl>https://gitee.com/rrqm_home/baboon</PackageProjectUrl>
@@ -48,12 +48,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="dotnetCampus.LatestCSharpFeatures" Version="12.0.1" PrivateAssets="all" />
-	</ItemGroup>
-	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-		<PackageReference Include="TouchSocket.Core" Version="3.1.0" />
+		<PackageReference Include="PolySharp" Version="1.15.0">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="TouchSocket.Core" Version="4.0.0-beta.5" />
 	</ItemGroup>
 
 	<Target Name="CopyNuGetPackage" AfterTargets="Pack" Condition="'$(Configuration)' == 'Release'">
