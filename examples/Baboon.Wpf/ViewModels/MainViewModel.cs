@@ -10,6 +10,7 @@
 // 感谢您的下载和使用
 // ------------------------------------------------------------------------------
 
+using Baboon.Core.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Windows;
@@ -20,16 +21,23 @@ internal class MainViewModel : ObservableRecipient
 {
     private readonly IModuleCatalog m_moduleCatalog;
 
-    public MainViewModel(IModuleCatalog moduleCatalog, IRegionManager regionManager)
+    public MainViewModel(IModuleCatalog moduleCatalog, IRegionManager regionManager, IMenuService menuService)
     {
         this.ThrowErrorCommand = new RelayCommand(this.ThrowError);
         this.SayHelloCommand = new RelayCommand(this.SayHello);
         this.m_moduleCatalog = moduleCatalog;
 
-        //regionManager.RequestNavigate("mainRoot", "SayHello");
+        this.MenuItems = menuService.MenuItems;
     }
 
-
+    #region 属性
+    private IEnumerable<MenuItem> menuItems;
+    public IEnumerable<MenuItem> MenuItems
+    {
+        get { return this.menuItems; }
+        set { this.SetProperty(ref this.menuItems, value); }
+    }
+    #endregion
 
     #region Command
     public RelayCommand ThrowErrorCommand { get; set; }

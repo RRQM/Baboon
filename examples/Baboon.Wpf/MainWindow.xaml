@@ -8,15 +8,26 @@
         Width="800"
         Height="450"
         mc:Ignorable="d">
-    <WrapPanel>
-        <Button Margin="10"
-                Command="{Binding ThrowErrorCommand}"
-                Content="抛出异常" />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Menu ItemsSource="{Binding MenuItems}">
+            
+        </Menu>
 
-        <Button Margin="10"
-                Command="{Binding SayHelloCommand}"
-                Content="SayHello" />
+        <WrapPanel Grid.Row="1">
+            <Button Margin="10"
+            Command="{Binding ThrowErrorCommand}"
+            Content="抛出异常" />
 
-        <ContentControl x:Name="contentRoot"/>
-    </WrapPanel>
+            <Button Margin="10"
+            Command="{Binding SayHelloCommand}"
+            Content="SayHello" />
+
+            <ContentControl x:Name="contentRoot"/>
+        </WrapPanel>
+    </Grid>
+    
 </Window>

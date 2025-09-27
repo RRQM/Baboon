@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.7.34024.191
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11018.127 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SayHello.Module", "SayHello.Module\SayHello.Module.csproj", "{46F0BDA5-0A17-CE0F-99EF-B195500C7204}"
 EndProject
@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".Solutions", ".Solutions", 
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Baboon.Core", "Baboon.Core\Baboon.Core.csproj", "{C339CA03-3BCB-47FC-A661-6B17C6D043C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +34,10 @@ Global
 		{578BED56-A7D2-9353-BBEE-74BB9AF44CC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{578BED56-A7D2-9353-BBEE-74BB9AF44CC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{578BED56-A7D2-9353-BBEE-74BB9AF44CC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C339CA03-3BCB-47FC-A661-6B17C6D043C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C339CA03-3BCB-47FC-A661-6B17C6D043C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C339CA03-3BCB-47FC-A661-6B17C6D043C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C339CA03-3BCB-47FC-A661-6B17C6D043C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

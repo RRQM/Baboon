@@ -10,46 +10,23 @@
 // 感谢您的下载和使用
 // ------------------------------------------------------------------------------
 
-using Baboon;
 using Baboon.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
-using System.Windows.Forms;
 
-namespace SatHello.Module;
+namespace Baboon.Core;
 
-public class SayHelloModule : AppModuleBase
+public class BaboonCoreModule : AppModuleBase
 {
-    public SayHelloModule()
-    {
-        this.Description = ModuleDescription.FromAssembly(this.GetType().Assembly);
-    }
-
-    public override ModuleDescription Description { get; }
+    public override ModuleDescription Description => ModuleDescription.FromAssembly(this.GetType().Assembly);
 
     protected override Task OnInitializeAsync(IApplication application, AppModuleInitEventArgs e)
     {
+        e.Services.AddSingleton<IMenuService, MenuService>();
         return Task.CompletedTask;
     }
 
     protected override Task OnStartupAsync(IApplication application, AppModuleStartupEventArgs e)
     {
-        var serviceProvider = this.ServiceProvider;
-
-        if (serviceProvider is not null)
-        {
-            var menuService = serviceProvider.GetRequiredService<IMenuService>();
-
-            menuService.AddMenuItem(new MenuItem()
-            {
-                Id = Guid.NewGuid(),
-                Text = "Say Hello",
-                Action = () =>
-                {
-                    MessageBox.Show("Hello Baboon!");
-                }
-            });
-        }
-
         return Task.CompletedTask;
     }
 }
