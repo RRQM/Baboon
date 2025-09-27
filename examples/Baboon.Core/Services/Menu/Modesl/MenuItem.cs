@@ -10,6 +10,8 @@
 // 感谢您的下载和使用
 // ------------------------------------------------------------------------------
 
+using System.Windows.Input;
+
 namespace Baboon.Core.Services;
 
 public class MenuItem
@@ -20,4 +22,6 @@ public class MenuItem
     public List<MenuItem> Items { get; } = new List<MenuItem>();
 
     public Action? Action { get; init; }
+
+    public ICommand? ClickCommand { get; init; }
 }

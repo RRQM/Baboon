@@ -1,4 +1,4 @@
-﻿namespace Baboon.Winform;
+namespace Baboon.Winform;
 
 partial class Form1
 {
@@ -28,18 +28,34 @@ partial class Form1
     /// </summary>
     private void InitializeComponent()
     {
-        SuspendLayout();
+        this.menuStrip1 = new MenuStrip();
+        this.SuspendLayout();
+        // 
+        // menuStrip1
+        // 
+        this.menuStrip1.ImageScalingSize = new Size(32, 32);
+        this.menuStrip1.Location = new Point(0, 0);
+        this.menuStrip1.Name = "menuStrip1";
+        this.menuStrip1.Size = new Size(1600, 24);
+        this.menuStrip1.TabIndex = 0;
+        this.menuStrip1.Text = "menuStrip1";
         // 
         // Form1
         // 
-        AutoScaleDimensions = new SizeF(7F, 17F);
-        AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(800, 450);
-        Name = "Form1";
-        Text = "Form1";
-        Load += Form1_Load;
-        ResumeLayout(false);
+        this.AutoScaleDimensions = new SizeF(14F, 31F);
+        this.AutoScaleMode = AutoScaleMode.Font;
+        this.ClientSize = new Size(1600, 821);
+        this.Controls.Add(this.menuStrip1);
+        this.MainMenuStrip = this.menuStrip1;
+        this.Margin = new Padding(6, 5, 6, 5);
+        this.Name = "Form1";
+        this.Text = "Form1";
+        this.Load += this.Form1_Load;
+        this.ResumeLayout(false);
+        this.PerformLayout();
     }
 
     #endregion
+
+    private MenuStrip menuStrip1;
 }

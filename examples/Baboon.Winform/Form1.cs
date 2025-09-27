@@ -10,18 +10,56 @@
 // 感谢您的下载和使用
 // ------------------------------------------------------------------------------
 
+using Baboon.Core.Services;
 using System.Diagnostics;
 
 namespace Baboon.Winform;
 
 public partial class Form1 : Form
 {
-    public Form1()
+    private readonly IMenuService m_menuService;
+
+    public Form1(IMenuService menuService)
     {
         this.InitializeComponent();
+        this.m_menuService = menuService;
     }
 
-    private async void Form1_Load(object sender, EventArgs e)
+    private void Form1_Load(object sender, EventArgs e)
+    {
+        this.menuStrip1.Items.Clear();
+        foreach (var item in this.m_menuService.MenuItems)
+        {
+            var menuItem = CreateToolStripMenuItem(item);
+            this.menuStrip1.Items.Add(menuItem);
+        }
+    }
+
+    private ToolStripMenuItem CreateToolStripMenuItem(Baboon.Core.Services.MenuItem item)
+    {
+        var toolStripItem = new ToolStripMenuItem(item.Text ?? string.Empty);
+        if (item.Action != null)
+        {
+            toolStripItem.Click += (s, e) => item.Action();
+        }
+        else if (item.ClickCommand != null)
+        {
+            toolStripItem.Click += (s, e) =>
+            {
+                if (item.ClickCommand.CanExecute(null))
+                {
+                    item.ClickCommand.Execute(null);
+                }
+            };
+        }
+        foreach (var child in item.Items)
+        {
+            toolStripItem.DropDownItems.Add(CreateToolStripMenuItem(child));
+        }
+        return toolStripItem;
+    }
+
+    private async void Run(object sender, EventArgs e)
     {
         await Task.Run(async () =>
         {

@@ -10,6 +10,7 @@
 // 感谢您的下载和使用
 // ------------------------------------------------------------------------------
 
+using Baboon.Core;
 using Baboon.Wpf.MyRegions;
 using Baboon.Wpf.ViewModels;
 using System.IO;
@@ -24,8 +25,8 @@ public partial class App : BaboonWpfApplication
 {
     protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
     {
-        //可以直接注册模块
-        //moduleCatalog.Add<SayHelloModule>;
+        moduleCatalog.Add<BaboonCoreModule>();
+        base.ConfigureModuleCatalog(moduleCatalog);
     }
 
     protected override Window CreateMainWindow(IWindowManager windowManager)

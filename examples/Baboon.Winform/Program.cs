@@ -10,6 +10,8 @@
 // 感谢您的下载和使用
 // ------------------------------------------------------------------------------
 
+using Baboon.Core;
+
 namespace Baboon.Winform;
 
 internal static class Program
@@ -41,6 +43,12 @@ internal static class Program
             //添加服务
             //e.Services.AddSingleton<>();
             return Task.CompletedTask;
+        }
+
+        protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
+        {
+            moduleCatalog.Add<BaboonCoreModule>();
+            base.ConfigureModuleCatalog(moduleCatalog);
         }
 
         protected override Task StartupAsync(AppModuleStartupEventArgs e)

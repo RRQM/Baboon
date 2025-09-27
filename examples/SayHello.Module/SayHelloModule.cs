@@ -12,6 +12,7 @@
 
 using Baboon;
 using Baboon.Core.Services;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows.Forms;
 
@@ -46,7 +47,12 @@ public class SayHelloModule : AppModuleBase
                 Action = () =>
                 {
                     MessageBox.Show("Hello Baboon!");
-                }
+                },
+
+                ClickCommand = new RelayCommand(() =>
+                {
+                    MessageBox.Show("Hello Baboon!");
+                })
             });
         }
 
