@@ -1,0 +1,151 @@
+name: Build and Publish NuGet Package
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'src/**'
+      - '.github/workflows/**'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'src/**'
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  PROJECT_PATH: 'src/Baboon/Baboon.csproj'
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Restore dependencies
+      run: dotnet restore src/Baboon.sln
+
+    - name: Build project
+      run: dotnet build ${{ env.PROJECT_PATH }} --configuration Release --no-restore
+
+    - name: Run tests (if any)
+      run: dotnet test src/ --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage"
+      continue-on-error: true
+
+    - name: Pack NuGet package
+      run: dotnet pack ${{ env.PROJECT_PATH }} --configuration Release --no-build --output ./packages
+
+    - name: List packages for debugging
+      run: Get-ChildItem -Path "./packages" -Recurse
+
+    - name: Upload NuGet package as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: nuget-package
+        path: ./packages/*.nupkg
+
+  publish-nuget:
+    needs: build-and-test
+    runs-on: windows-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Get current version from csproj
+      id: get-version
+      run: |
+        [xml]$props = Get-Content $env:PROJECT_PATH
+        $version = $props.Project.PropertyGroup.Version
+        $packageId = $props.Project.PropertyGroup.PackageId
+        if (-not $packageId -or $packageId -eq '') { $packageId = $props.Project.PropertyGroup.Title }
+        if (-not $packageId -or $packageId -eq '') { $packageId = [System.IO.Path]::GetFileNameWithoutExtension($env:PROJECT_PATH) }
+        Write-Host "Current version: $version"
+        Write-Host "Package name: $packageId"
+        echo "version=$version" >> $env:GITHUB_OUTPUT
+        echo "package-name=$packageId" >> $env:GITHUB_OUTPUT
+
+    - name: Check if version exists on NuGet.org
+      id: check-version
+      run: |
+        $packageName = "${{ steps.get-version.outputs.package-name }}"
+        $version = "${{ steps.get-version.outputs.version }}"
+        
+        Write-Host "Checking if $packageName version $version exists on NuGet.org..."
+        
+        try {
+          $response = Invoke-RestMethod -Uri "https://api.nuget.org/v3-flatcontainer/$($packageName.ToLower())/index.json" -Method Get
+          $existingVersions = $response.versions
+          
+          if ($existingVersions -contains $version) {
+            Write-Host "Version $version already exists on NuGet.org. Skipping publish."
+            echo "should-publish=false" >> $env:GITHUB_OUTPUT
+          } else {
+            Write-Host "Version $version does not exist on NuGet.org. Proceeding with publish."
+            echo "should-publish=true" >> $env:GITHUB_OUTPUT
+          }
+        } catch {
+          if ($_.Exception.Response.StatusCode -eq 404) {
+            Write-Host "Package $packageName not found on NuGet.org. This might be the first publish."
+            echo "should-publish=true" >> $env:GITHUB_OUTPUT
+          } else {
+            Write-Host "Error checking NuGet.org: $($_.Exception.Message)"
+            Write-Host "Proceeding with publish (will use --skip-duplicate flag)."
+            echo "should-publish=true" >> $env:GITHUB_OUTPUT
+          }
+        }
+
+    - name: Download NuGet package artifact
+      if: steps.check-version.outputs.should-publish == 'true'
+      uses: actions/download-artifact@v4
+      with:
+        name: nuget-package
+        path: ./packages
+
+    - name: Verify packages exist
+      if: steps.check-version.outputs.should-publish == 'true'
+      run: |
+        if (-not (Test-Path "./packages/*.nupkg")) {
+          Write-Error "No .nupkg files found in ./packages directory"
+          Get-ChildItem -Path "./packages" -Recurse
+          exit 1
+        }
+        Write-Host "Found packages:"
+        Get-ChildItem -Path "./packages" -Filter "*.nupkg"
+
+    - name: Publish NuGet package
+      if: steps.check-version.outputs.should-publish == 'true'
+      run: |
+        Write-Host "Publishing version ${{ steps.get-version.outputs.version }} to NuGet.org..."
+        $nupkgFiles = Get-ChildItem -Path "./packages" -Filter "*.nupkg"
+        foreach ($file in $nupkgFiles) {
+          Write-Host "Publishing $($file.Name)..."
+          dotnet nuget push $file.FullName `
+            --api-key ${{ secrets.NUGET_API_KEY }} `
+            --source https://api.nuget.org/v3/index.json `
+            --skip-duplicate
+        }
+        Write-Host "NuGet package published successfully!"
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+
+    - name: Skip publish notification
+      if: steps.check-version.outputs.should-publish == 'false'
+      run: |
+        Write-Host "::notice::NuGet package version ${{ steps.get-version.outputs.version }} already exists. Publishing skipped."

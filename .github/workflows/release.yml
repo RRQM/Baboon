@@ -1,0 +1,79 @@
+name: Release and Publish NuGet Package
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  PROJECT_PATH: 'src/Baboon/Baboon.csproj'
+  SOURCE_GENERATOR_PATH: 'src/BaboonSourceGenerator/BaboonSourceGenerator.csproj'
+
+jobs:
+  release:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Get version from tag
+      id: get_version
+      run: echo "VERSION=$($env:GITHUB_REF -replace 'refs/tags/v','')" >> $env:GITHUB_OUTPUT
+
+    - name: Update version in Directory.Build.props
+      run: |
+        (Get-Content Directory.Build.props) -replace '<Version>.*</Version>', '<Version>${{ steps.get_version.outputs.VERSION }}</Version>' | Set-Content Directory.Build.props
+
+    - name: Restore dependencies
+      run: dotnet restore CodeRegion.slnx
+
+    - name: Build Source Generator
+      run: dotnet build ${{ env.SOURCE_GENERATOR_PATH }} --configuration Release --no-restore --framework netstandard2.0
+
+    - name: Build project
+      run: dotnet build ${{ env.PROJECT_PATH }} --configuration Release --no-restore --framework netstandard2.0
+
+    - name: Pack NuGet package
+      run: dotnet pack ${{ env.PROJECT_PATH }} --configuration Release --no-build --output ./packages
+
+    - name: List packages for debugging
+      run: Get-ChildItem -Path "./packages" -Recurse
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ./packages/*.nupkg
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Publish to NuGet.org
+      run: |
+        $nupkgFiles = Get-ChildItem -Path "./packages" -Filter "*.nupkg"
+        foreach ($file in $nupkgFiles) {
+          dotnet nuget push $file.FullName `
+            --api-key ${{ secrets.NUGET_API_KEY }} `
+            --source https://api.nuget.org/v3/index.json `
+            --skip-duplicate
+        }
+
+    - name: Publish to GitHub Packages
+      run: |
+        $nupkgFiles = Get-ChildItem -Path "./packages" -Filter "*.nupkg"
+        foreach ($file in $nupkgFiles) {
+          dotnet nuget push $file.FullName `
+            --api-key ${{ secrets.GITHUB_TOKEN }} `
+            --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json `
+            --skip-duplicate
+        }
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
