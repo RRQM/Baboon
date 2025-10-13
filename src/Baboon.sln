@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.7.34024.191
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11109.219 d18.0-oob
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Baboon", "Baboon\Baboon.csproj", "{8FC4BC25-327D-4842-B48C-BFE931E4E5DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Baboon.Desktop", "Baboon.Desktop\Baboon.Desktop.csproj", "{33FD9624-453E-4FFB-8DBA-277EB4AAB646}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{8FC4BC25-327D-4842-B48C-BFE931E4E5DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FC4BC25-327D-4842-B48C-BFE931E4E5DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8FC4BC25-327D-4842-B48C-BFE931E4E5DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33FD9624-453E-4FFB-8DBA-277EB4AAB646}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33FD9624-453E-4FFB-8DBA-277EB4AAB646}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33FD9624-453E-4FFB-8DBA-277EB4AAB646}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33FD9624-453E-4FFB-8DBA-277EB4AAB646}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
