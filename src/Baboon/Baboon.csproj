@@ -54,7 +54,7 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="TouchSocket.Core" Version="4.0.0-beta.96" />
+		<PackageReference Include="TouchSocket.Core" Version="4.0.0-rc.10" />
 	</ItemGroup>
 
 	<Target Name="CopyNuGetPackage" AfterTargets="Pack" Condition="'$(Configuration)' == 'Release'">
