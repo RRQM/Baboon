@@ -10,9 +10,6 @@
 // 感谢您的下载和使用
 // ------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
 using TouchSocket.Core;
 
@@ -22,7 +19,7 @@ internal class InternalModuleCatalog : IModuleCatalog
 {
     public InternalModuleCatalog(Func<string, bool> findModuleFunc)
     {
-        this.findModuleFunc = findModuleFunc; 1
+        this.findModuleFunc = findModuleFunc;
     }
     private readonly List<Type> appModuleTypes = new List<Type>();
     private readonly object m_locker = new object();
