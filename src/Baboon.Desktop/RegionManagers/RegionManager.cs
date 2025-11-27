@@ -16,7 +16,7 @@ using System.Collections.Generic;
 using System.Windows.Controls;
 using TouchSocket.Core;
 
-namespace Baboon.Core;
+namespace Baboon.Desktop;
 
 public class RegionManager : IRegionManager
 {

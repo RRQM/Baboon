@@ -10,11 +10,11 @@
 // 感谢您的下载和使用
 // ------------------------------------------------------------------------------
 
-using Baboon;
-using Baboon.Core.Services;
+using Baboon.Core;
+using BaboonDemo.Core.Services;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
-using System.Windows.Forms;
+using System.Windows;
 
 namespace SatHello.Module;
 

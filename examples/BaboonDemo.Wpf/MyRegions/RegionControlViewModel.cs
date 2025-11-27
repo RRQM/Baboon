@@ -10,17 +10,10 @@
 // 感谢您的下载和使用
 // ------------------------------------------------------------------------------
 
-using System.Windows.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Baboon.Wpf.MyRegions;
+namespace Baboon.DemoWpf.MyRegions;
 
-/// <summary>
-/// RegionControl.xaml 的交互逻辑
-/// </summary>
-public partial class RegionControl : UserControl
+internal class RegionControlViewModel : ObservableRecipient
 {
-    public RegionControl()
-    {
-        this.InitializeComponent();
-    }
 }

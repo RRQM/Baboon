@@ -11,8 +11,10 @@
 // ------------------------------------------------------------------------------
 
 using Baboon.Core;
+using Baboon.Desktop;
+using BaboonDemo.Core;
 
-namespace Baboon.Winform;
+namespace Baboon.DemoWinform;
 
 internal static class Program
 {

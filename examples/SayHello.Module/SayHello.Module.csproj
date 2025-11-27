@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Baboon.Core\Baboon.Core.csproj" />
+	  <ProjectReference Include="..\BaboonDemo.Core\BaboonDemo.Core.csproj" />
 	</ItemGroup>
 
 

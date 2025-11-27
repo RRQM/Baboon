@@ -10,12 +10,14 @@
 // 感谢您的下载和使用
 // ------------------------------------------------------------------------------
 
-using Baboon.Core.Services;
+using Baboon.Core;
+using Baboon.Desktop;
+using BaboonDemo.Core.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Windows;
 
-namespace Baboon.Wpf.ViewModels;
+namespace Baboon.DemoWpf.ViewModels;
 
 internal class MainViewModel : ObservableRecipient
 {

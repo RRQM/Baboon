@@ -11,7 +11,6 @@
 // ------------------------------------------------------------------------------
 
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Windows;
 
 namespace Baboon.Desktop;

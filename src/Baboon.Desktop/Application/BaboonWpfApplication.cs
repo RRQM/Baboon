@@ -10,13 +10,11 @@
 // 感谢您的下载和使用
 // ------------------------------------------------------------------------------
 
+using Baboon.Core;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System;
-using System.IO;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using TouchSocket.Core;
@@ -54,7 +52,7 @@ public abstract class BaboonWpfApplication : Application, IApplication
     public IHost AppHost { get; private set; }
 
     /// <inheritdoc/>
-    public ILogger<BaboonWpfApplication> Logger => this.ServiceProvider.GetService<ILogger<BaboonWpfApplication>>();
+    public ILogger<IApplication> Logger => this.ServiceProvider.GetService<ILogger<IApplication>>();
 
     /// <inheritdoc/>
     public IServiceProvider ServiceProvider => this.AppHost?.Services;

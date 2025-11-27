@@ -12,7 +12,7 @@
 
 using System.Windows.Controls;
 
-namespace Baboon.Core;
+namespace Baboon.Desktop;
 
 public interface IRegionManager
 {

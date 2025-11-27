@@ -10,12 +10,17 @@
 // 感谢您的下载和使用
 // ------------------------------------------------------------------------------
 
+using System.Windows.Controls;
 
-namespace Baboon.Core.Services;
+namespace Baboon.DemoWpf.MyRegions;
 
-public interface IMenuService
+/// <summary>
+/// RegionControl.xaml 的交互逻辑
+/// </summary>
+public partial class RegionControl : UserControl
 {
-    IEnumerable<MenuItem> MenuItems { get; }
-
-    void AddMenuItem(MenuItem menuItem);
+    public RegionControl()
+    {
+        this.InitializeComponent();
+    }
 }

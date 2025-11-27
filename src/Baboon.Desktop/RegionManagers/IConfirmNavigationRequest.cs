@@ -10,7 +10,7 @@
 // 感谢您的下载和使用
 // ------------------------------------------------------------------------------
 
-namespace Baboon.Core;
+namespace Baboon.Desktop;
 
 public interface IConfirmNavigationRequest
 {

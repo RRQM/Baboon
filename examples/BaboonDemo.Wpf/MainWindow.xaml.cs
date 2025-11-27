@@ -10,10 +10,11 @@
 // 感谢您的下载和使用
 // ------------------------------------------------------------------------------
 
+using Baboon.Desktop;
 using System.Diagnostics;
 using System.Windows;
 
-namespace Baboon.Wpf;
+namespace Baboon.DemoWpf;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml

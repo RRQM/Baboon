@@ -10,10 +10,11 @@
 // 感谢您的下载和使用
 // ------------------------------------------------------------------------------
 
+using Baboon.Core;
 using System.Reflection;
 using TouchSocket.Core;
 
-namespace Baboon.Core;
+namespace Baboon.Desktop;
 
 internal class InternalModuleCatalog : IModuleCatalog
 {
@@ -145,12 +146,7 @@ internal class InternalModuleCatalog : IModuleCatalog
     {
         lock (this.m_locker)
         {
-            if (this.m_modules.TryGetValue(id, out var appModule))
-            {
-                return appModule;
-            }
-
-            return default;
+            return this.m_modules.TryGetValue(id, out var appModule) ? appModule : default;
         }
 
     }

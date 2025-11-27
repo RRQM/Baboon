@@ -10,7 +10,7 @@
 // 感谢您的下载和使用
 // ------------------------------------------------------------------------------
 
-namespace Baboon.Converters;
+namespace Baboon.Desktop.Converters;
 
 /// <summary>
 /// BoolStringConverter

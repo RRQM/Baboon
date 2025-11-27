@@ -10,14 +10,24 @@
 // 感谢您的下载和使用
 // ------------------------------------------------------------------------------
 
-namespace Baboon.Core.Services;
+using Baboon.Core;
+using BaboonDemo.Core.Services;
+using Microsoft.Extensions.DependencyInjection;
 
-internal class MenuService : IMenuService
+namespace BaboonDemo.Core;
+
+public class BaboonCoreModule : AppModuleBase
 {
-    private readonly List<MenuItem> m_menuItems = new List<MenuItem>();
-    public IEnumerable<MenuItem> MenuItems => this.m_menuItems;
-    public void AddMenuItem(MenuItem menuItem)
+    public override ModuleDescription Description => ModuleDescription.FromAssembly(this.GetType().Assembly);
+
+    protected override Task OnInitializeAsync(IApplication application, AppModuleInitEventArgs e)
     {
-        this.m_menuItems.Add(menuItem);
+        e.Services.AddSingleton<IMenuService, MenuService>();
+        return Task.CompletedTask;
+    }
+
+    protected override Task OnStartupAsync(IApplication application, AppModuleStartupEventArgs e)
+    {
+        return Task.CompletedTask;
     }
 }

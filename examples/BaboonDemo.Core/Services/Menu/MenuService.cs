@@ -10,18 +10,14 @@
 // 感谢您的下载和使用
 // ------------------------------------------------------------------------------
 
-using System.Windows.Input;
+namespace BaboonDemo.Core.Services;
 
-namespace Baboon.Core.Services;
-
-public class MenuItem
+internal class MenuService : IMenuService
 {
-    public Guid Id { get; init; }
-    public string? Text { get; init; }
-
-    public List<MenuItem> Items { get; } = new List<MenuItem>();
-
-    public Action? Action { get; init; }
-
-    public ICommand? ClickCommand { get; init; }
+    private readonly List<MenuItem> m_menuItems = new List<MenuItem>();
+    public IEnumerable<MenuItem> MenuItems => this.m_menuItems;
+    public void AddMenuItem(MenuItem menuItem)
+    {
+        this.m_menuItems.Add(menuItem);
+    }
 }

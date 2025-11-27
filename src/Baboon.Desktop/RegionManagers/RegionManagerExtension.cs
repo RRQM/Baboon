@@ -14,7 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Windows;
 
-namespace Baboon.Core;
+namespace Baboon.Desktop;
 
 public static class RegionManagerExtension
 {

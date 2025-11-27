@@ -6,8 +6,10 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UseWPF>true</UseWPF>
 	</PropertyGroup>
-
 	<ItemGroup>
-	  <ProjectReference Include="..\Baboon.Core\Baboon.Core.csproj" />
+		<PackageReference Include="Baboon.Desktop" Version="0.0.1" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\BaboonDemo.Core\BaboonDemo.Core.csproj" />
 	</ItemGroup>
 </Project>

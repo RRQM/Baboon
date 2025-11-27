@@ -1,4 +1,4 @@
-namespace Baboon.Winform;
+namespace Baboon.DemoWinform;
 
 partial class Form1
 {

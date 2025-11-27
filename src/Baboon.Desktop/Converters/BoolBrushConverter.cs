@@ -12,7 +12,7 @@
 
 using System.Windows.Media;
 
-namespace Baboon.Converters;
+namespace Baboon.Desktop.Converters;
 
 /// <summary>
 /// BoolBrushConverter

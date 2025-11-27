@@ -56,7 +56,7 @@ public abstract class BaboonWinformApplication : IApplication
     public IHost AppHost { get; private set; }
 
     /// <inheritdoc/>
-    public ILogger<BaboonWpfApplication> Logger => this.ServiceProvider.GetService<ILogger<BaboonWpfApplication>>();
+    public ILogger<IApplication> Logger => this.ServiceProvider.GetService<ILogger<IApplication>>();
 
     /// <summary>
     /// 获取主窗体。

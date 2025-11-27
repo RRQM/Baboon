@@ -2,6 +2,6 @@
 
 	
 	<ItemGroup>
-		<PackageReference Include="Baboon" Version="3.1.8" />
+		<PackageReference Include="Baboon.Core" Version="0.0.1" />
 	</ItemGroup>
 </Project>

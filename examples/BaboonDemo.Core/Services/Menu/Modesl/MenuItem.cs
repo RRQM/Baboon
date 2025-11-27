@@ -10,10 +10,18 @@
 // 感谢您的下载和使用
 // ------------------------------------------------------------------------------
 
-using CommunityToolkit.Mvvm.ComponentModel;
+using System.Windows.Input;
 
-namespace Baboon.Wpf.MyRegions;
+namespace BaboonDemo.Core.Services;
 
-internal class RegionControlViewModel : ObservableRecipient
+public class MenuItem
 {
+    public Guid Id { get; init; }
+    public string? Text { get; init; }
+
+    public List<MenuItem> Items { get; } = new List<MenuItem>();
+
+    public Action? Action { get; init; }
+
+    public ICommand? ClickCommand { get; init; }
 }

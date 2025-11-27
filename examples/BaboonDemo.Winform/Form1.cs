@@ -10,10 +10,11 @@
 // 感谢您的下载和使用
 // ------------------------------------------------------------------------------
 
-using Baboon.Core.Services;
+using Baboon.Desktop;
+using BaboonDemo.Core.Services;
 using System.Diagnostics;
 
-namespace Baboon.Winform;
+namespace Baboon.DemoWinform;
 
 public partial class Form1 : Form
 {
@@ -30,12 +31,12 @@ public partial class Form1 : Form
         this.menuStrip1.Items.Clear();
         foreach (var item in this.m_menuService.MenuItems)
         {
-            var menuItem = CreateToolStripMenuItem(item);
+            var menuItem = this.CreateToolStripMenuItem(item);
             this.menuStrip1.Items.Add(menuItem);
         }
     }
 
-    private ToolStripMenuItem CreateToolStripMenuItem(Baboon.Core.Services.MenuItem item)
+    private ToolStripMenuItem CreateToolStripMenuItem(BaboonDemo.Core.Services.MenuItem item)
     {
         var toolStripItem = new ToolStripMenuItem(item.Text ?? string.Empty);
         if (item.Action != null)
@@ -54,7 +55,7 @@ public partial class Form1 : Form
         }
         foreach (var child in item.Items)
         {
-            toolStripItem.DropDownItems.Add(CreateToolStripMenuItem(child));
+            toolStripItem.DropDownItems.Add(this.CreateToolStripMenuItem(child));
         }
         return toolStripItem;
     }

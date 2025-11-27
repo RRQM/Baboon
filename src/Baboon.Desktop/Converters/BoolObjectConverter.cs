@@ -14,7 +14,7 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace Baboon.Converters;
+namespace Baboon.Desktop.Converters;
 
 /// <summary>
 /// bool与object的转换。

@@ -11,12 +11,14 @@
 // ------------------------------------------------------------------------------
 
 using Baboon.Core;
-using Baboon.Wpf.MyRegions;
-using Baboon.Wpf.ViewModels;
+using Baboon.DemoWpf.MyRegions;
+using Baboon.DemoWpf.ViewModels;
+using Baboon.Desktop;
+using BaboonDemo.Core;
 using System.IO;
 using System.Windows;
 
-namespace Baboon.Wpf;
+namespace Baboon.DemoWpf;
 
 /// <summary>
 /// Interaction logic for App.xaml
