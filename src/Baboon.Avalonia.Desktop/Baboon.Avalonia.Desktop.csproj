@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Avalonia" Version="11.3.9" />
+		<PackageReference Include="Avalonia.Desktop" Version="11.3.9" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\Baboon.Core\Baboon.Core.csproj" />
+	</ItemGroup>
+</Project>
