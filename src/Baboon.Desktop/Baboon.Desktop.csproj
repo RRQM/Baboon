@@ -1,7 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net462;net8.0-windows</TargetFrameworks>
+		<UseWPF>true</UseWPF>
+		<UseWindowsForms>true</UseWindowsForms>
+		<PackageTags>wpf;ioc;logger;plugin</PackageTags>
+		<Description>这是一个wpf的，模块化开发的功能库。支持模块加载、下载、更新等。同时包含了本地数据库、本地日志组件等功能。</Description>
+		
+		
+	</PropertyGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\Baboon.Core\Baboon.Core.csproj" />
+	</ItemGroup>
+	
 </Project>

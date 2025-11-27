@@ -1,0 +1,98 @@
+﻿<Project>
+	<PropertyGroup>
+		<Version>0.0.1</Version>
+		<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<LangVersion>preview</LangVersion>
+		<Company>若汝棋茗</Company>
+		<Copyright>Copyright © 2025 若汝棋茗</Copyright>
+		<PackageProjectUrl>https://touchsocket.net/</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/RRQM/Baboon</RepositoryUrl>
+		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<Authors>若汝棋茗</Authors>
+		<BaseOutputPath>$(SolutionDir)\Build</BaseOutputPath>
+		<NoWarn>IDE0290;IDE0090;IDE0305;IDE0028;IDE0300;IDE0130;IDE0057</NoWarn>
+		<GenerateSatelliteAssemblies>true</GenerateSatelliteAssemblies>
+		<GenerateSatelliteAssembliesCore>true</GenerateSatelliteAssembliesCore>
+		<PackageOutputPath>$(SolutionDir)\Build\NugetPackages\Packages</PackageOutputPath>
+		<LogoFile>logo.png</LogoFile>
+		<ReadmeFile>Readme.md</ReadmeFile>
+		<!--<Nullable>enable</Nullable>-->
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="PolySharp" Version="1.15.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+		<EnableDynamicLoading>true</EnableDynamicLoading>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<AssemblyOriginatorKeyFile>$(MSBuildProjectName).snk</AssemblyOriginatorKeyFile>
+		<SignAssembly>True</SignAssembly>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="$(SolutionDir)\Resources\$(LogoFile)" Pack="true" PackagePath="\" />
+		<None Include="..\..\README.md" Link="README.md" Pack="true" PackagePath="\"/>
+		
+	</ItemGroup>
+	
+	<!-- 优化：统一LICENSE文件变量，合并重复配置，简化条件 -->
+	<PropertyGroup>
+		<LicenseFile>LICENSE.txt</LicenseFile>
+	</PropertyGroup>
+
+	
+
+	<!--全部配置相关-->
+	<PropertyGroup Condition="'$(IsSourceGenerator)'!='True'">
+		<PackageIcon>logo.png</PackageIcon>
+		<ApplicationIcon>logo.ico</ApplicationIcon>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	</PropertyGroup>
+
+	<!--Release发布配置相关-->
+	<PropertyGroup Condition="'$(Configuration)'=='Release' And '$(IsSourceGenerator)'!='True'">
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+		<PackageLicenseFile>$(LicenseFile)</PackageLicenseFile>
+	</PropertyGroup>
+
+	<!--Release-开源版-发布配置相关-->
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<DebugSymbols>True</DebugSymbols>
+		<DebugType>Embedded</DebugType>
+		<EmbedAllSources>True</EmbedAllSources>
+	</PropertyGroup>
+
+	<!--Debug-开源版-发布配置相关，此处不嵌入源码主要为了直接调试开发源码-->
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+		<DebugSymbols>True</DebugSymbols>
+		<DebugType>Embedded</DebugType>
+	</PropertyGroup>
+
+	<Target Name="CopyNuGetPackage" AfterTargets="Pack">
+		<Copy SourceFiles="$(PackageOutputPath)\$(PackageId).$(PackageVersion).nupkg"
+              DestinationFolder="D:\Nuget\local"
+              Condition="Exists('D:\Nuget\local')" />
+	</Target>
+
+
+	<!--全局命名空间-->
+	<ItemGroup>
+		<Using Include="System" />
+		<Using Include="System.Collections.Generic" />
+		<Using Include="System.Linq" />
+		<Using Include="System.Threading" />
+		<Using Include="System.Threading.Tasks" />
+		<Using Include="System.Text" />
+		<Using Include="System.IO" />
+	</ItemGroup>
+</Project>
