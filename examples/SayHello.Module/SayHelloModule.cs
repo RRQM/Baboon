@@ -50,7 +50,7 @@ public class SayHelloModule : AppModuleBase
                     messenger.Send(new TextMessage("Hello Baboon!"));
                 },
 
-                ClickCommand = new MyClass(() =>
+                ClickCommand = new RelayCommand2(() =>
                 {
                     messenger.Send(new TextMessage("Hello Baboon!"));
                 }),
@@ -62,24 +62,27 @@ public class SayHelloModule : AppModuleBase
         return Task.CompletedTask;
     }
 }
-class MyClass : ICommand
+
+
+public class RelayCommand2 : ICommand
 {
-    private Action m_value;
+    private readonly Action _action;
 
-    public MyClass(Action value)
+    public RelayCommand2(Action action)
     {
-        this.m_value = value;
+        this._action = action;
+
+        CanExecuteChanged += this.RelayCommand2_CanExecuteChanged;
     }
 
-    public event EventHandler? CanExecuteChanged;
-
-    public bool CanExecute(object? parameter)
+    private void RelayCommand2_CanExecuteChanged(object? sender, EventArgs e)
     {
-        throw new NotImplementedException();
+
     }
 
-    public void Execute(object? parameter)
-    {
-        throw new NotImplementedException();
-    }
+    public bool CanExecute(object? parameter) => true;
+
+    public void Execute(object? parameter) => this._action();
+
+    public event EventHandler? CanExecuteChanged = delegate { };
 }

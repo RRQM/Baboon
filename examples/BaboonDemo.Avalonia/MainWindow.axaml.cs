@@ -11,6 +11,7 @@
 // ------------------------------------------------------------------------------
 
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 
 namespace BaboonDemo.Avalonia;
 
@@ -18,6 +19,10 @@ public partial class MainWindow : Window
 {
     public MainWindow()
     {
-        InitializeComponent();
+        this.InitializeComponent();
+    }
+
+    private void MenuItem_Click(object? sender, RoutedEventArgs e)
+    {
     }
 }

@@ -1,28 +1,38 @@
 <Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:models="clr-namespace:BaboonDemo.Core.Services;assembly=BaboonDemo.Core"
-        xmlns:viewmodels="clr-namespace:BaboonDemo.Mvvm;assembly=BaboonDemo.Mvvm"
-        mc:Ignorable="d"
-        x:Class="BaboonDemo.Avalonia.MainWindow"
-        Title="MainWindow"
-        Width="800"
-        Height="450"
-        x:DataType="viewmodels:MainViewModel">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Menu IsEnabled="True" ItemsSource="{Binding MenuItems}">
-            <Menu.ItemTemplate>
-                <DataTemplate x:DataType="models:MenuItem">
-                    <MenuItem Header="{Binding Text}" Command="{Binding ClickCommand}" />
-                </DataTemplate>
-            </Menu.ItemTemplate>
-        </Menu>
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:models="clr-namespace:BaboonDemo.Core.Services;assembly=BaboonDemo.Core"
+		xmlns:viewmodels="clr-namespace:BaboonDemo.Mvvm;assembly=BaboonDemo.Mvvm"
+		xmlns:controls="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls"
+		mc:Ignorable="d"
+		x:Class="BaboonDemo.Avalonia.MainWindow"
+		Title="MainWindow"
+		Width="800"
+		Height="450"
+		x:DataType="viewmodels:MainViewModel">
 
-        <ListBox Grid.Row="1" ItemsSource="{Binding Messages}" />
-    </Grid>
+	<Window.Resources>
+		<DataTemplate x:Key="MenuItemTemplate" DataType="{x:Type models:MenuItem}">
+			<MenuItem
+			Header="{Binding Text}"
+			ItemsSource="{Binding Items}"
+			ItemTemplate="{StaticResource MenuItemTemplate}"
+			Command="{Binding ClickCommand}">
+			</MenuItem>
+		</DataTemplate>
+	</Window.Resources>
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+
+
+		<Menu ItemsSource="{Binding MenuItems}"
+			  ItemTemplate="{StaticResource MenuItemTemplate}" />
+
+		<ListBox Grid.Row="1" ItemsSource="{Binding Messages}" />
+	</Grid>
 </Window>
