@@ -11,8 +11,10 @@
 // ------------------------------------------------------------------------------
 
 using Baboon.Core;
+using BaboonDemo.Core.Messages;
 using BaboonDemo.Core.Services;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace SatHello.Module;
@@ -34,7 +36,7 @@ public class SayHelloModule : AppModuleBase
     protected override Task OnStartupAsync(IApplication application, AppModuleStartupEventArgs e)
     {
         var serviceProvider = this.ServiceProvider;
-
+        var messenger = serviceProvider.GetRequiredService<IMessenger>();
         if (serviceProvider is not null)
         {
             var menuService = serviceProvider.GetRequiredService<IMenuService>();
@@ -45,12 +47,12 @@ public class SayHelloModule : AppModuleBase
                 Text = "Say Hello",
                 Action = () =>
                 {
-                    //MessageBox.Show("Hello Baboon!");
+                    messenger.Send(new TextMessage("Hello Baboon!"));
                 },
 
                 ClickCommand = new RelayCommand(() =>
                 {
-                    //MessageBox.Show("Hello Baboon!");
+                    messenger.Send(new TextMessage("Hello Baboon!"));
                 })
             });
         }

@@ -10,26 +10,14 @@
 // 感谢您的下载和使用
 // ------------------------------------------------------------------------------
 
-using Baboon.Core;
-using BaboonDemo.Core.Services;
-using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.Extensions.DependencyInjection;
+namespace BaboonDemo.Core.Messages;
 
-namespace BaboonDemo.Core;
-
-public class BaboonCoreModule : AppModuleBase
+public class TextMessage
 {
-    public override ModuleDescription Description => ModuleDescription.FromAssembly(this.GetType().Assembly);
+    public string? Message { get; }
 
-    protected override Task OnInitializeAsync(IApplication application, AppModuleInitEventArgs e)
+    public TextMessage(string? message)
     {
-        e.Services.AddSingleton<IMenuService, MenuService>();
-        e.Services.AddSingleton<IMessenger, WeakReferenceMessenger>();
-        return Task.CompletedTask;
-    }
-
-    protected override Task OnStartupAsync(IApplication application, AppModuleStartupEventArgs e)
-    {
-        return Task.CompletedTask;
+        this.Message = message;
     }
 }

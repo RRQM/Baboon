@@ -23,17 +23,9 @@
             </Menu.ItemTemplate>
         </Menu>
 
-        <WrapPanel Grid.Row="1">
-            <Button Margin="10"
-            Command="{Binding ThrowErrorCommand}"
-            Content="抛出异常" />
-
-            <Button Margin="10"
-            Command="{Binding SayHelloCommand}"
-            Content="SayHello" />
-
-            <ContentControl x:Name="contentRoot"/>
-        </WrapPanel>
+        <ListBox Grid.Row="1" ItemsSource="{Binding Messages}">
+            
+        </ListBox>
     </Grid>
-    
+
 </Window>

@@ -11,55 +11,50 @@
 // ------------------------------------------------------------------------------
 
 using Baboon.Core;
-using Baboon.Desktop;
+using BaboonDemo.Core.Messages;
 using BaboonDemo.Core.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using System.Windows;
+using CommunityToolkit.Mvvm.Messaging;
+using System.Collections.ObjectModel;
 
-namespace Baboon.DemoWpf.ViewModels;
+namespace BaboonDemo.Mvvm;
 
-internal class MainViewModel : ObservableRecipient
+public class MainViewModel : ObservableRecipient, IRecipient<TextMessage>
 {
     private readonly IModuleCatalog m_moduleCatalog;
 
-    public MainViewModel(IModuleCatalog moduleCatalog, IRegionManager regionManager, IMenuService menuService)
+    public MainViewModel(IModuleCatalog moduleCatalog, IMenuService menuService, IMessenger messenger)
+: base(messenger)
     {
-        this.ThrowErrorCommand = new RelayCommand(this.ThrowError);
-        this.SayHelloCommand = new RelayCommand(this.SayHello);
         this.m_moduleCatalog = moduleCatalog;
 
         this.MenuItems = menuService.MenuItems;
+
+        this.IsActive = true;
     }
 
     #region 属性
-    private IEnumerable<MenuItem> menuItems;
-    public IEnumerable<MenuItem> MenuItems
+    private IEnumerable<MenuItem>? menuItems;
+    public IEnumerable<MenuItem>? MenuItems
     {
         get { return this.menuItems; }
         set { this.SetProperty(ref this.menuItems, value); }
     }
+
+    public ObservableCollection<string> Messages { get; } = new();
     #endregion
 
-    #region Command
-    public RelayCommand ThrowErrorCommand { get; set; }
-    public RelayCommand SayHelloCommand { get; set; }
-    #endregion
 
     #region 方法
-    private void ThrowError()
-    {
-        throw new Exception("错误");
-    }
 
     private void SayHello()
     {
-        if (!this.m_moduleCatalog.Contains("SayHello"))
-        {
-            MessageBox.Show("没有找到模块");
-        }
 
+    }
 
+    public void Receive(TextMessage message)
+    {
+        Messages.Add($"[{DateTime.Now}]:{message.Message}");
     }
 
     #endregion

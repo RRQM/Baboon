@@ -25,8 +25,8 @@ public partial class MainWindow : Window
     {
         this.InitializeComponent();
 
-        this.Loaded += this.MainWindow_Loaded;
-        regionManager.AddRoot("mainRoot", this.contentRoot);
+        //this.Loaded += this.MainWindow_Loaded;
+        //regionManager.AddRoot("mainRoot", this.contentRoot);
     }
 
     private async void MainWindow_Loaded(object sender, RoutedEventArgs e)

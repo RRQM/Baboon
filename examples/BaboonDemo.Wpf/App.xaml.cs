@@ -12,9 +12,9 @@
 
 using Baboon.Core;
 using Baboon.DemoWpf.MyRegions;
-using Baboon.DemoWpf.ViewModels;
 using Baboon.Desktop;
 using BaboonDemo.Core;
+using BaboonDemo.Mvvm;
 using System.IO;
 using System.Windows;
 
