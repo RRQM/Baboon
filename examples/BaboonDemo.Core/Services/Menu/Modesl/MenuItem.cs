@@ -16,12 +16,12 @@ namespace BaboonDemo.Core.Services;
 
 public class MenuItem
 {
-    public Guid Id { get; init; }
-    public string? Text { get; init; }
+    public Guid Id { get; set; }
+    public string? Text { get; set; }
 
     public List<MenuItem> Items { get; } = new List<MenuItem>();
 
-    public Action? Action { get; init; }
+    public Action? Action { get; set; }
 
-    public ICommand? ClickCommand { get; init; }
+    public ICommand? ClickCommand { get; set; }
 }

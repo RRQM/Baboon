@@ -15,10 +15,10 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Menu ItemsSource="{Binding MenuItems}">
+        <Menu IsEnabled="True" ItemsSource="{Binding MenuItems}">
             <Menu.ItemTemplate>
                 <DataTemplate x:DataType="models:MenuItem">
-                    <MenuItem IsEnabled="True" Header="{Binding Text}" Command="{Binding ClickCommand}" />
+                    <MenuItem Header="{Binding Text}" Command="{Binding ClickCommand}" />
                 </DataTemplate>
             </Menu.ItemTemplate>
         </Menu>

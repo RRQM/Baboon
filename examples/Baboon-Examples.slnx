@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/.Solutions/">
+    <File Path="Directory.Build.props" />
+  </Folder>
+  <Project Path="BaboonDemo.Avalonia/BaboonDemo.Avalonia.csproj" />
+  <Project Path="BaboonDemo.Core/BaboonDemo.Core.csproj" />
+  <Project Path="BaboonDemo.Mvvm/BaboonDemo.Mvvm.csproj" />
+  <Project Path="BaboonDemo.Winform/BaboonDemo.Winform.csproj" />
+  <Project Path="BaboonDemo.Wpf/BaboonDemo.Wpf.csproj" />
+  <Project Path="SayHello.Module/SayHello.Module.csproj" />
+</Solution>

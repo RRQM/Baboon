@@ -13,9 +13,9 @@
 using Baboon.Core;
 using BaboonDemo.Core.Messages;
 using BaboonDemo.Core.Services;
-using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
+using System.Windows.Input;
 
 namespace SatHello.Module;
 
@@ -50,13 +50,36 @@ public class SayHelloModule : AppModuleBase
                     messenger.Send(new TextMessage("Hello Baboon!"));
                 },
 
-                ClickCommand = new RelayCommand(() =>
+                ClickCommand = new MyClass(() =>
                 {
                     messenger.Send(new TextMessage("Hello Baboon!"));
-                })
+                }),
+
+
             });
         }
 
         return Task.CompletedTask;
+    }
+}
+class MyClass : ICommand
+{
+    private Action m_value;
+
+    public MyClass(Action value)
+    {
+        this.m_value = value;
+    }
+
+    public event EventHandler? CanExecuteChanged;
+
+    public bool CanExecute(object? parameter)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Execute(object? parameter)
+    {
+        throw new NotImplementedException();
     }
 }
