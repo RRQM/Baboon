@@ -13,12 +13,13 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Threading;
 using Baboon.Core;
+using Baboon.Desktop;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System.ComponentModel.Design;
+using TouchSocket.Core;
 
 namespace Baboon.Avalonia.Desktop;
 
@@ -42,7 +43,7 @@ public abstract class BaboonAvaloniaDesktopApplication : Application, IApplicati
     {
         if (this.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-
+            desktop.Exit += this.Desktop_Exit;
             //desktop.MainWindow = new MainWindow();
 
             //MainThreadTaskFactory.Initialize();
@@ -50,6 +51,11 @@ public abstract class BaboonAvaloniaDesktopApplication : Application, IApplicati
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private void Desktop_Exit(object? sender, ControlledApplicationLifetimeExitEventArgs e)
+    {
+        this.OnExit(e);
     }
 
     /// <summary>
@@ -106,7 +112,7 @@ public abstract class BaboonAvaloniaDesktopApplication : Application, IApplicati
     }
 
     /// <inheritdoc/>
-    protected override async void OnExit(ExitEventArgs e)
+    protected virtual async void OnExit(ControlledApplicationLifetimeExitEventArgs e)
     {
         var moduleCatalog = this.ServiceProvider.GetService<IModuleCatalog>();
         foreach (var appModule in moduleCatalog.GetAppModules())
@@ -114,7 +120,6 @@ public abstract class BaboonAvaloniaDesktopApplication : Application, IApplicati
             appModule.SafeDispose();
         }
         await this.AppHost.StopAsync();
-        base.OnExit(e);
     }
 
 
@@ -125,31 +130,6 @@ public abstract class BaboonAvaloniaDesktopApplication : Application, IApplicati
     /// <returns>异步任务。</returns>
     protected abstract Task StartupAsync(AppModuleStartupEventArgs e);
 
-    private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
-    {
-        try
-        {
-            e.Handled = true; //把 Handled 属性设为true，表示此异常已处理，程序可以继续运行，不会强制退出
-            this.OnException(e.Exception);
-        }
-        catch
-        {
-            this.Shutdown(-1);
-        }
-    }
-
-    private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-    {
-        if (e.IsTerminating)
-        {
-            this.Shutdown(-1);
-            return;
-        }
-        if (e.ExceptionObject is Exception ex)
-        {
-            this.OnException(ex);
-        }
-    }
 
     private async Task PrivateOnStartupAsync(IClassicDesktopStyleApplicationLifetime e)
     {
@@ -166,10 +146,10 @@ public abstract class BaboonAvaloniaDesktopApplication : Application, IApplicati
         #region 注册服务
 
         builder.Services.AddSingleton<IModuleCatalog>(moduleCatalog);
-        builder.Services.AddSingleton<IResourceService>(new InternalResourceService(this));
+
         builder.Services.AddSingleton<IApplication>(this);
         builder.Services.AddWindowManager();
-        builder.Services.AddRegionManager();
+
 
         await this.InitializeAsync(new AppModuleInitEventArgs(e.Args, builder.Services));
 
@@ -194,17 +174,7 @@ public abstract class BaboonAvaloniaDesktopApplication : Application, IApplicati
         await host.StartAsync();
 
         var windowManager = this.ServiceProvider.GetRequiredService<IWindowManager>();
-        this.MainWindow = this.CreateMainWindow(windowManager);
-        this.MainWindow.Show();
+        e.MainWindow = this.CreateMainWindow(windowManager);
     }
 
-    public sealed override void OnFrameworkInitializationCompleted()
-    {
-        if (this.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            desktop.MainWindow = new MainWindow();
-        }
-
-        base.OnFrameworkInitializationCompleted();
-    }
 }

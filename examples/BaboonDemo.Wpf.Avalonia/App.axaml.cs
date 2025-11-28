@@ -10,29 +10,39 @@
 // 感谢您的下载和使用
 // ------------------------------------------------------------------------------
 
-using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Baboon.Avalonia.Desktop;
+using Baboon.Core;
+using BaboonDemo.Core;
 
-namespace AvaloniaApplication2;
+namespace BaboonDemo.Wpf.Avalonia;
 
-public partial class App : Application
+public partial class App : BaboonAvaloniaDesktopApplication
 {
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
-
     }
 
-    public override void OnFrameworkInitializationCompleted()
+    protected override Window CreateMainWindow(IWindowManager windowManager)
     {
-        if (this.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            desktop.MainWindow = new MainWindow();
-        }
-
-        base.OnFrameworkInitializationCompleted();
+        return windowManager.GetWindow<MainWindow>();
     }
 
+    protected override Task InitializeAsync(AppModuleInitEventArgs e)
+    {
+        return Task.CompletedTask;
+    }
 
+    protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
+    {
+        moduleCatalog.Add<BaboonCoreModule>();
+        base.ConfigureModuleCatalog(moduleCatalog);
+    }
+
+    protected override Task StartupAsync(AppModuleStartupEventArgs e)
+    {
+        return Task.CompletedTask;
+    }
 }

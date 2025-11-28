@@ -3,16 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="AvaloniaApplication1.MainWindow"
-        Title="AvaloniaApplication1">
-	<StackPanel>
-		<Button Content="123"></Button>
-		<TextBlock Text="123"></TextBlock>
-
-		<ProgressBar
-  Width="100"
-  Height="100"
-  Value="30"
-  Theme="{DynamicResource ProgressRing}"/>
-	</StackPanel>
+        x:Class="BaboonDemo.Wpf.Avalonia.MainWindow"
+        Title="BaboonDemo.Wpf.Avalonia">
+    Welcome to Avalonia!
 </Window>

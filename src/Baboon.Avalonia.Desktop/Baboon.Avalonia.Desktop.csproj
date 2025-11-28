@@ -12,4 +12,5 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Baboon.Core\Baboon.Core.csproj" />
 	</ItemGroup>
+	<Import Project="..\Baboon.Shared\Baboon.Shared.projitems" Label="Shared" />
 </Project>

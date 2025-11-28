@@ -10,17 +10,14 @@
 // 感谢您的下载和使用
 // ------------------------------------------------------------------------------
 
-using UIKit;
+using Avalonia.Controls;
 
-namespace AvaloniaApplication3.iOS;
+namespace BaboonDemo.Wpf.Avalonia;
 
-public class Application
+public partial class MainWindow : Window
 {
-    // This is the main entry point of the application.
-    static void Main(string[] args)
+    public MainWindow()
     {
-        // if you want to use a different Application Delegate class from "AppDelegate"
-        // you can specify it here.
-        UIApplication.Main(args, null, typeof(AppDelegate));
+        InitializeComponent();
     }
 }
