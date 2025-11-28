@@ -2,8 +2,27 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="BaboonDemo.Wpf.Avalonia.MainWindow"
-        Title="BaboonDemo.Wpf.Avalonia">
-    Welcome to Avalonia!
+        xmlns:models="clr-namespace:BaboonDemo.Core.Services;assembly=BaboonDemo.Core"
+        xmlns:viewmodels="clr-namespace:BaboonDemo.Mvvm;assembly=BaboonDemo.Mvvm"
+        mc:Ignorable="d"
+        x:Class="BaboonDemo.Avalonia.MainWindow"
+        Title="MainWindow"
+        Width="800"
+        Height="450"
+        x:DataType="viewmodels:MainViewModel">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Menu ItemsSource="{Binding MenuItems}">
+            <Menu.ItemTemplate>
+                <DataTemplate x:DataType="models:MenuItem">
+                    <MenuItem IsEnabled="True" Header="{Binding Text}" Command="{Binding ClickCommand}" />
+                </DataTemplate>
+            </Menu.ItemTemplate>
+        </Menu>
+
+        <ListBox Grid.Row="1" ItemsSource="{Binding Messages}" />
+    </Grid>
 </Window>

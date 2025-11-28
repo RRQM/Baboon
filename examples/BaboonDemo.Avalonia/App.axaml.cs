@@ -15,8 +15,9 @@ using Avalonia.Markup.Xaml;
 using Baboon.Avalonia.Desktop;
 using Baboon.Core;
 using BaboonDemo.Core;
+using BaboonDemo.Mvvm;
 
-namespace BaboonDemo.Wpf.Avalonia;
+namespace BaboonDemo.Avalonia;
 
 public partial class App : BaboonAvaloniaDesktopApplication
 {
@@ -32,6 +33,7 @@ public partial class App : BaboonAvaloniaDesktopApplication
 
     protected override Task InitializeAsync(AppModuleInitEventArgs e)
     {
+        e.Services.AddSingletonView<MainWindow, MainViewModel>();
         return Task.CompletedTask;
     }
 

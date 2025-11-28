@@ -12,7 +12,7 @@
 
 using Avalonia.Controls;
 
-namespace BaboonDemo.Wpf.Avalonia;
+namespace BaboonDemo.Avalonia;
 
 public partial class MainWindow : Window
 {

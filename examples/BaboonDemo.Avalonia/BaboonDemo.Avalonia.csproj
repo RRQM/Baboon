@@ -3,9 +3,9 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <BuiltInComInteropSupport>false</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,5 +23,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BaboonDemo.Core\BaboonDemo.Core.csproj" />
+    <ProjectReference Include="..\BaboonDemo.Mvvm\BaboonDemo.Mvvm.csproj" />
   </ItemGroup>
 </Project>
