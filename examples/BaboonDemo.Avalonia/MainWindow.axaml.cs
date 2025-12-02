@@ -11,10 +11,6 @@
 // ------------------------------------------------------------------------------
 
 using Avalonia.Controls;
-using Avalonia.Interactivity;
-using BaboonDemo.Core.Services;
-using AMenuItem = Avalonia.Controls.MenuItem;
-using AppMenuItem = BaboonDemo.Core.Services.MenuItem;
 
 namespace BaboonDemo.Avalonia;
 
@@ -23,21 +19,5 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         this.InitializeComponent();
-    }
-
-    private void MenuItem_Click(object? sender, RoutedEventArgs e)
-    {
-        // no longer needed, kept for compatibility
-        if (sender is AMenuItem menuItem && menuItem.DataContext is AppMenuItem model)
-        {
-            if (model.ClickCommand?.CanExecute(null) == true)
-            {
-                model.ClickCommand.Execute(null);
-            }
-            else
-            {
-                model.Action?.Invoke();
-            }
-        }
     }
 }
