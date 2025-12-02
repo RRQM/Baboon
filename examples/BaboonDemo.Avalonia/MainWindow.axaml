@@ -5,6 +5,7 @@
 		xmlns:models="clr-namespace:BaboonDemo.Core.Services;assembly=BaboonDemo.Core"
 		xmlns:viewmodels="clr-namespace:BaboonDemo.Mvvm;assembly=BaboonDemo.Mvvm"
 		xmlns:controls="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls"
+        xmlns:local="clr-namespace:BaboonDemo.Avalonia"
 		mc:Ignorable="d"
 		x:Class="BaboonDemo.Avalonia.MainWindow"
 		Title="MainWindow"
@@ -18,7 +19,7 @@
 			Header="{Binding Text}"
 			ItemsSource="{Binding Items}"
 			ItemTemplate="{StaticResource MenuItemTemplate}"
-			Command="{Binding ClickCommand}">
+                local:MenuItemBehaviors.ClickCommand="{Binding ClickCommand}">
 			</MenuItem>
 		</DataTemplate>
 	</Window.Resources>
