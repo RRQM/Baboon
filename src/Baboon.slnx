@@ -5,5 +5,8 @@
   <Project Path="Baboon.Avalonia.Desktop/Baboon.Avalonia.Desktop.csproj" />
   <Project Path="Baboon.Core/Baboon.Core.csproj" />
   <Project Path="Baboon.Desktop/Baboon.Desktop.csproj" />
+  <Project Path="Baboon.Maui/Baboon.Maui.csproj" Id="baa859b7-f4d9-454f-88e7-86b7ffe0ad2c">
+    <Deploy />
+  </Project>
   <Project Path="Baboon.Shared/Baboon.Shared.shproj" Id="6a0fac97-77fd-4277-bdeb-df788d07eda2" />
 </Solution>
