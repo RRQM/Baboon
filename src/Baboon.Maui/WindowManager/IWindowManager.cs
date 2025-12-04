@@ -1,4 +1,4 @@
-﻿// ------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 // 此代码版权（除特别声明或在XREF结尾的命名空间的代码）归作者本人若汝棋茗所有
 // 源代码使用协议遵循本仓库的开源协议及附加协议，若本仓库没有设置，则按MIT开源协议授权
 // CSDN博客：https://blog.csdn.net/qq_40374647
@@ -10,9 +10,11 @@
 // 感谢您的下载和使用
 // ------------------------------------------------------------------------------
 
-namespace Baboon.Maui;
 
-// All the code in this file is included in all platforms.
-public class Class1
+namespace Baboon.Avalonia.Desktop;
+
+public interface IWindowManager
 {
+    TWindow GetWindow<TWindow>(object? token = null) where TWindow : Window;
+    void Show<TWindow>(object? token = null) where TWindow : Window;
 }

@@ -25,10 +25,6 @@ namespace Baboon.Avalonia.Desktop;
 
 public abstract class BaboonAvaloniaDesktopApplication : Application, IApplication
 {
-    public BaboonAvaloniaDesktopApplication()
-    {
-
-    }
     /// <inheritdoc/>
     public IHost AppHost { get; private set; }
 

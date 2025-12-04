@@ -10,13 +10,97 @@
 // 感谢您的下载和使用
 // ------------------------------------------------------------------------------
 
+using Baboon.Avalonia.Desktop;
+using Baboon.Core;
+using Baboon.Desktop;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+
 namespace Baboon.Maui;
 
-public partial class BaboonMauiApplication : Application
-{
-}
 
-public class BaboonMauiApplication
+public abstract partial class BaboonMauiApplicationCore: Application,Baboon.Core.IApplication
 {
+    /// <summary>
+    /// 初始化应用程序。
+    /// </summary>
+    /// <param name="e">初始化事件参数。</param>
+    /// <returns>异步任务。</returns>
+    protected abstract Task InitializeAsync(AppModuleInitEventArgs e);
+    /// <inheritdoc/>
+    public IHost AppHost { get; private set; }
 
+    /// <inheritdoc/>
+    public ILogger<Core.IApplication> Logger => this.ServiceProvider.GetService<ILogger<Core.IApplication>>();
+
+    /// <inheritdoc/>
+    public IServiceProvider ServiceProvider => this.AppHost?.Services;
+
+    /// <summary>
+    /// 配置模块
+    /// </summary>
+    /// <param name="moduleCatalog"></param>
+    protected virtual void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
+    {
+    }
+    /// <summary>
+    /// 查找模块。
+    /// </summary>
+    /// <param name="path">模块路径。</param>
+    /// <returns>是否找到模块。</returns>
+    protected virtual bool FindModule(string path)
+    {
+        var name = Path.GetFileNameWithoutExtension(path);
+        return name.EndsWith("Module");
+    }
+
+    public void Initialize(IServiceCollection services)
+    {
+        #region 配置、加载插件
+
+        var moduleCatalog = new InternalModuleCatalog(this.FindModule);
+        this.ConfigureModuleCatalog(moduleCatalog);
+        moduleCatalog.Build();
+
+        #endregion 配置、加载插件
+
+        #region 注册服务
+
+        services.AddSingleton<IModuleCatalog>(moduleCatalog);
+
+       services.AddSingleton<Core.IApplication>(this);
+        services.AddSingleton<Avalonia.Desktop.IWindowManager,Avalonia.Desktop.WindowManager>();
+
+
+        this.InitializeAsync(new AppModuleInitEventArgs([], services)).GetAwaiter().GetResult();
+
+        #endregion 注册服务
+
+        foreach (var appModule in moduleCatalog.GetAppModules())
+        {
+            appModule.InitializeAsync(this, new AppModuleInitEventArgs([], services)).GetAwaiter().GetResult();
+        }
+
+       
+    }
+
+    public void Startup(IServiceProvider serviceProvider)
+    {
+        var host = builder.Build();
+        this.AppHost = host;
+
+        Ioc.Default.ConfigureServices(host.Services);
+        await this.StartupAsync(new AppModuleStartupEventArgs(host));
+
+        foreach (var appModule in moduleCatalog.GetAppModules())
+        {
+            await appModule.StartupAsync(this, new AppModuleStartupEventArgs(host));
+        }
+
+        await host.StartAsync();
+
+        var windowManager = this.ServiceProvider.GetRequiredService<IWindowManager>();
+        e.MainWindow = this.CreateMainWindow(windowManager);
+    }
 }
