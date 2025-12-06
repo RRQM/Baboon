@@ -42,7 +42,7 @@
 	<ItemGroup>
 		<None Include="$(SolutionDir)\Resources\$(LogoFile)" Pack="true" PackagePath="\" />
 		<None Include="..\..\README.md" Link="README.md" Pack="true" PackagePath="\"/>
-		
+		<None Include="$(LicenseFile)" Pack="true" PackagePath="\" />
 	</ItemGroup>
 	
 	<!-- 优化：统一LICENSE文件变量，合并重复配置，简化条件 -->
@@ -53,14 +53,14 @@
 	
 
 	<!--全部配置相关-->
-	<PropertyGroup Condition="'$(IsSourceGenerator)'!='True'">
+	<PropertyGroup>
 		<PackageIcon>logo.png</PackageIcon>
 		<ApplicationIcon>logo.ico</ApplicationIcon>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	</PropertyGroup>
 
 	<!--Release发布配置相关-->
-	<PropertyGroup Condition="'$(Configuration)'=='Release' And '$(IsSourceGenerator)'!='True'">
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 		<PackageLicenseFile>$(LicenseFile)</PackageLicenseFile>
 	</PropertyGroup>
