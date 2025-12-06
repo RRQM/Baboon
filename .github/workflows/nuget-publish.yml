@@ -45,16 +45,8 @@ jobs:
 
     - name: Pack all NuGet packages
       run: |
-        Write-Host "Packing all projects in src directory..."
-        $projects = Get-ChildItem -Path "src" -Filter "*.csproj" -Recurse | Where-Object { 
-          $_.Directory.Name -notmatch "obj|bin" 
-        }
-        
-        foreach ($project in $projects) {
-          Write-Host "Packing $($project.Name)..."
-          dotnet pack $project.FullName --configuration Release --output ./packages
-        }
-        
+        Write-Host "Packing NuGet packages from solution..."
+        dotnet pack ${{ env.SOLUTION_PATH }} --configuration Release --no-build --output ./packages
         Write-Host "All packages packed successfully!"
 
     - name: List packages for debugging
