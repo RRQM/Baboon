@@ -52,7 +52,7 @@ jobs:
         
         foreach ($project in $projects) {
           Write-Host "Packing $($project.Name)..."
-          dotnet pack $project.FullName --configuration Release --no-build --output ./packages
+          dotnet pack $project.FullName --configuration Release --output ./packages
         }
         
         Write-Host "All packages packed successfully!"
