@@ -17,13 +17,13 @@ internal static class MauiAppBuilderExtension
     public static MauiAppBuilder UseBaboonMauiApp<TApp>(this MauiAppBuilder builder)
            where TApp : class, IApplication
     {
-        var applicationCore = new BaboonMauiApplicationCore();
-        applicationCore.Initialize(builder.Services);
-        builder.UseMauiApp<TApp>(p =>
-        {
-            applicationCore.Startup(p);
-            return ActivatorUtilities.CreateInstance<TApp>(p);
-        });
+        //var applicationCore = new BaboonMauiApplicationCore();
+        //applicationCore.Initialize(builder.Services);
+        //builder.UseMauiApp<TApp>(p =>
+        //{
+        //    applicationCore.Startup(p);
+        //    return ActivatorUtilities.CreateInstance<TApp>(p);
+        //});
         return builder;
     }
 }

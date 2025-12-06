@@ -30,6 +30,9 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
+    - name: Install .NET MAUI workload
+      run: dotnet workload install maui-android maui-ios maui
+
     - name: Restore dependencies
       run: dotnet restore ${{ env.SOLUTION_PATH }}
 

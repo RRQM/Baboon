@@ -87,20 +87,20 @@ public abstract partial class BaboonMauiApplicationCore: Application,Baboon.Core
 
     public void Startup(IServiceProvider serviceProvider)
     {
-        var host = builder.Build();
-        this.AppHost = host;
+        //var host = builder.Build();
+        //this.AppHost = host;
 
-        Ioc.Default.ConfigureServices(host.Services);
-        await this.StartupAsync(new AppModuleStartupEventArgs(host));
+        //Ioc.Default.ConfigureServices(host.Services);
+        //await this.StartupAsync(new AppModuleStartupEventArgs(host));
 
-        foreach (var appModule in moduleCatalog.GetAppModules())
-        {
-            await appModule.StartupAsync(this, new AppModuleStartupEventArgs(host));
-        }
+        //foreach (var appModule in moduleCatalog.GetAppModules())
+        //{
+        //    await appModule.StartupAsync(this, new AppModuleStartupEventArgs(host));
+        //}
 
-        await host.StartAsync();
+        //await host.StartAsync();
 
-        var windowManager = this.ServiceProvider.GetRequiredService<IWindowManager>();
-        e.MainWindow = this.CreateMainWindow(windowManager);
+        //var windowManager = this.ServiceProvider.GetRequiredService<IWindowManager>();
+        //e.MainWindow = this.CreateMainWindow(windowManager);
     }
 }
