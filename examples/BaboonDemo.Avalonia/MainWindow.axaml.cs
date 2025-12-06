@@ -11,6 +11,9 @@
 // ------------------------------------------------------------------------------
 
 using Avalonia.Controls;
+using Baboon.Core;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace BaboonDemo.Avalonia;
 
@@ -19,5 +22,25 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         this.InitializeComponent();
+        this.Loaded += this.MainWindow_Loaded;
+    }
+
+    private async void MainWindow_Loaded(object? sender, global::Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        await Task.Run(async () =>
+        {
+            //模拟耗时操作
+            for (var i = 0; i < 2; i++)
+            {
+                Debug.WriteLine(i);
+                await Task.Delay(1000);
+            }
+
+            //切换到主线程
+            await MainThreadTaskFactory.SwitchToMainThreadAsync();
+
+            //更新UI
+            this.Title = "Hello";
+        });
     }
 }

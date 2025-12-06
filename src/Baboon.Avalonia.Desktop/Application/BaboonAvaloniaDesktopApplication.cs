@@ -171,6 +171,7 @@ public abstract class BaboonAvaloniaDesktopApplication : Application, IApplicati
 
         var windowManager = this.ServiceProvider.GetRequiredService<IWindowManager>();
         e.MainWindow = this.CreateMainWindow(windowManager);
+        MainThreadTaskFactory.Initialize();
     }
 
 }

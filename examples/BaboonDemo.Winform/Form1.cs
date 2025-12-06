@@ -10,6 +10,7 @@
 // 感谢您的下载和使用
 // ------------------------------------------------------------------------------
 
+using Baboon.Core;
 using Baboon.Desktop;
 using BaboonDemo.Core.Services;
 using System.Diagnostics;

@@ -14,7 +14,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
-namespace Baboon.Desktop;
+namespace Baboon.Core;
 
 /// <summary>
 /// 主线程任务工厂
