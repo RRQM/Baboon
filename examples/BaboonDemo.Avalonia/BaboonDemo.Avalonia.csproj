@@ -18,7 +18,7 @@
       <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
       <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Baboon.Avalonia.Desktop" Version="0.0.4" />
+    <PackageReference Include="Baboon.Avalonia.Desktop" Version="0.0.7" />
   </ItemGroup>
 
   <ItemGroup>

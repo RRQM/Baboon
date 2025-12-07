@@ -1,6 +1,6 @@
 ﻿<Project>
 	<PropertyGroup>
-		<Version>0.0.5</Version>
+		<Version>0.0.7</Version>
 		<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<LangVersion>preview</LangVersion>
@@ -17,7 +17,7 @@
 		<GenerateSatelliteAssembliesCore>true</GenerateSatelliteAssembliesCore>
 		<PackageOutputPath>$(SolutionDir)\Build\NugetPackages\Packages</PackageOutputPath>
 		<LogoFile>logo.png</LogoFile>
-		<PackageReadme>README.md</PackageReadme>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<!--<Nullable>enable</Nullable>-->
 	</PropertyGroup>
 
@@ -41,7 +41,7 @@
 
 	<ItemGroup>
 		<None Include="$(SolutionDir)\Resources\$(LogoFile)" Pack="true" PackagePath="\" />
-		<None Include="..\..\README.md" Pack="true" PackagePath="\" />
+		<None Include="..\..\README.md" Pack="true" PackagePath="\" Link="README.md" />
 		<None Include="$(LicenseFile)" Pack="true" PackagePath="\" />
 	</ItemGroup>
 	

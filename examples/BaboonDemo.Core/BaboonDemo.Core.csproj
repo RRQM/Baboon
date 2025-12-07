@@ -4,6 +4,6 @@
 		<TargetFramework>net10.0</TargetFramework>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Baboon.Core" Version="0.0.4" />
+		<PackageReference Include="Baboon.Core" Version="0.0.7" />
 	</ItemGroup>
 </Project>
