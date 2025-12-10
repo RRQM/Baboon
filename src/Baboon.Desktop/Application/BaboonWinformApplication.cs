@@ -162,12 +162,13 @@ public abstract class BaboonWinformApplication : IApplication
     /// </summary>
     private async void Application_ApplicationExit(object sender, EventArgs e)
     {
-        var moduleCatalog = this.ServiceProvider.GetService<IModuleCatalog>();
+        var moduleCatalog = this.ServiceProvider.GetRequiredService<IModuleCatalog>();
         foreach (var appModule in moduleCatalog.GetAppModules())
         {
             appModule.SafeDispose();
         }
         await this.AppHost.StopAsync();
+        this.AppHost.Dispose();
     }
 
     /// <summary>

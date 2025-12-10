@@ -110,12 +110,13 @@ public abstract class BaboonAvaloniaDesktopApplication : Application, IApplicati
     /// <inheritdoc/>
     protected virtual async void OnExit(ControlledApplicationLifetimeExitEventArgs e)
     {
-        var moduleCatalog = this.ServiceProvider.GetService<IModuleCatalog>();
+        var moduleCatalog = this.ServiceProvider.GetRequiredService<IModuleCatalog>();
         foreach (var appModule in moduleCatalog.GetAppModules())
         {
             appModule.SafeDispose();
         }
-        await this.AppHost.StopAsync();
+        await this.AppHost.StopAsync().ConfigureFalseAwait();
+        this.AppHost.Dispose();
     }
 
 
@@ -147,13 +148,13 @@ public abstract class BaboonAvaloniaDesktopApplication : Application, IApplicati
         builder.Services.AddWindowManager();
 
 
-        await this.InitializeAsync(new AppModuleInitEventArgs(e.Args, builder.Services));
+        await this.InitializeAsync(new AppModuleInitEventArgs(e.Args, builder.Services)).ConfigureFalseAwait();
 
         #endregion 注册服务
 
         foreach (var appModule in moduleCatalog.GetAppModules())
         {
-            await appModule.InitializeAsync(this, new AppModuleInitEventArgs(e.Args, builder.Services));
+            await appModule.InitializeAsync(this, new AppModuleInitEventArgs(e.Args, builder.Services)).ConfigureFalseAwait();
         }
 
         var host = builder.Build();

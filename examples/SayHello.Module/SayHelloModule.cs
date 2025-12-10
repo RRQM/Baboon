@@ -16,6 +16,8 @@ using BaboonDemo.Core.Services;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System.Threading;
 
 namespace SatHello.Module;
 
@@ -30,11 +32,13 @@ public class SayHelloModule : AppModuleBase
 
     protected override Task OnInitializeAsync(IApplication application, AppModuleInitEventArgs e)
     {
+        e.Services.AddHostedService<MyClass>();
         return Task.CompletedTask;
     }
 
-    protected override Task OnStartupAsync(IApplication application, AppModuleStartupEventArgs e)
+    protected override async Task OnStartupAsync(IApplication application, AppModuleStartupEventArgs e)
     {
+        await Task.Delay(100).ConfigureAwait(false);
         var serviceProvider = this.ServiceProvider;
         var messenger = serviceProvider.GetRequiredService<IMessenger>();
         if (serviceProvider is not null)
@@ -59,6 +63,23 @@ public class SayHelloModule : AppModuleBase
             });
         }
 
-        return Task.CompletedTask;
+        await Task.CompletedTask;
+    }
+}
+
+class MyClass : BackgroundService
+{
+    public MyClass(IHost host)
+    {
+        string ss=host.GetType().FullName!;
+    }
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        while (true)
+        {
+            await Task.Delay(1000, stoppingToken);
+            Console.WriteLine("Hello Baboon!");
+        }
     }
 }

@@ -113,12 +113,13 @@ public abstract class BaboonWpfApplication : Application, IApplication
     /// <inheritdoc/>
     protected override async void OnExit(ExitEventArgs e)
     {
-        var moduleCatalog = this.ServiceProvider.GetService<IModuleCatalog>();
+        var moduleCatalog = this.ServiceProvider.GetRequiredService<IModuleCatalog>();
         foreach (var appModule in moduleCatalog.GetAppModules())
         {
             appModule.SafeDispose();
         }
         await this.AppHost.StopAsync();
+        this.AppHost.Dispose();
         base.OnExit(e);
     }
 
