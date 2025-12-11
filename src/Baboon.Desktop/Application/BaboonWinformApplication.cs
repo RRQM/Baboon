@@ -72,7 +72,7 @@ public abstract class BaboonWinformApplication : IApplication
     /// <param name="args">启动参数。</param>
     public void Run(params string[] args)
     {
-        this.PrivateOnStartupAsync(args).GetAwaiter().GetResult();
+        this.PrivateOnStartup(args);
     }
 
     /// <summary>
@@ -138,8 +138,7 @@ public abstract class BaboonWinformApplication : IApplication
     /// 初始化应用程序。
     /// </summary>
     /// <param name="e">初始化事件参数。</param>
-    /// <returns>异步任务。</returns>
-    protected abstract Task InitializeAsync(AppModuleInitEventArgs e);
+    protected abstract void Initialize(AppModuleInitEventArgs e);
 
     /// <summary>
     /// 处理异常。
@@ -154,20 +153,19 @@ public abstract class BaboonWinformApplication : IApplication
     /// 启动应用程序。
     /// </summary>
     /// <param name="e">启动事件参数。</param>
-    /// <returns>异步任务。</returns>
-    protected abstract Task StartupAsync(AppModuleStartupEventArgs e);
+    protected abstract void Startup(AppModuleStartupEventArgs e);
 
     /// <summary>
     /// 应用程序退出时的处理。
     /// </summary>
-    private async void Application_ApplicationExit(object sender, EventArgs e)
+    private void Application_ApplicationExit(object sender, EventArgs e)
     {
         var moduleCatalog = this.ServiceProvider.GetRequiredService<IModuleCatalog>();
         foreach (var appModule in moduleCatalog.GetAppModules())
         {
             appModule.SafeDispose();
         }
-        await this.AppHost.StopAsync();
+        _=this.AppHost.StopAsync();
         this.AppHost.Dispose();
     }
 
@@ -199,8 +197,7 @@ public abstract class BaboonWinformApplication : IApplication
     /// 私有启动方法。
     /// </summary>
     /// <param name="args">启动参数。</param>
-    /// <returns>异步任务。</returns>
-    private async Task PrivateOnStartupAsync(string[] args)
+    private void PrivateOnStartup(string[] args)
     {
         var builder = this.CreateApplicationBuilder(args);
 
@@ -218,27 +215,27 @@ public abstract class BaboonWinformApplication : IApplication
         builder.Services.AddSingleton<IApplication>(this);
         builder.Services.AddFormManager();
 
-        await this.InitializeAsync(new AppModuleInitEventArgs(args, builder.Services));
+        this.Initialize(new AppModuleInitEventArgs(args, builder.Services));
 
         #endregion 注册服务
 
         foreach (var appModule in moduleCatalog.GetAppModules())
         {
-            await appModule.InitializeAsync(this, new AppModuleInitEventArgs(args, builder.Services));
+            appModule.Initialize(this, new AppModuleInitEventArgs(args, builder.Services));
         }
 
         var host = builder.Build();
         this.AppHost = host;
 
         Ioc.Default.ConfigureServices(host.Services);
-        await this.StartupAsync(new AppModuleStartupEventArgs(host));
+        this.Startup(new AppModuleStartupEventArgs(host));
 
         foreach (var appModule in moduleCatalog.GetAppModules())
         {
-            await appModule.StartupAsync(this, new AppModuleStartupEventArgs(host));
+            appModule.Startup(this, new AppModuleStartupEventArgs(host));
         }
 
-        await host.StartAsync();
+        host.StartAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 
         var formManager = this.ServiceProvider.GetRequiredService<IFormManager>();
 

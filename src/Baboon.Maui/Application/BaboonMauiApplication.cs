@@ -26,8 +26,8 @@ public abstract partial class BaboonMauiApplicationCore: Application,Baboon.Core
     /// 初始化应用程序。
     /// </summary>
     /// <param name="e">初始化事件参数。</param>
-    /// <returns>异步任务。</returns>
-    protected abstract Task InitializeAsync(AppModuleInitEventArgs e);
+    protected abstract void Initialize(AppModuleInitEventArgs e);
+    
     /// <inheritdoc/>
     public IHost AppHost { get; private set; }
 
@@ -44,6 +44,7 @@ public abstract partial class BaboonMauiApplicationCore: Application,Baboon.Core
     protected virtual void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
     {
     }
+    
     /// <summary>
     /// 查找模块。
     /// </summary>
@@ -69,20 +70,17 @@ public abstract partial class BaboonMauiApplicationCore: Application,Baboon.Core
 
         services.AddSingleton<IModuleCatalog>(moduleCatalog);
 
-       services.AddSingleton<Core.IApplication>(this);
+        services.AddSingleton<Core.IApplication>(this);
         services.AddSingleton<Avalonia.Desktop.IWindowManager,Avalonia.Desktop.WindowManager>();
 
-
-        this.InitializeAsync(new AppModuleInitEventArgs([], services)).GetAwaiter().GetResult();
+        this.Initialize(new AppModuleInitEventArgs([], services));
 
         #endregion 注册服务
 
         foreach (var appModule in moduleCatalog.GetAppModules())
         {
-            appModule.InitializeAsync(this, new AppModuleInitEventArgs([], services)).GetAwaiter().GetResult();
+            appModule.Initialize(this, new AppModuleInitEventArgs([], services));
         }
-
-       
     }
 
     public void Startup(IServiceProvider serviceProvider)
@@ -91,14 +89,14 @@ public abstract partial class BaboonMauiApplicationCore: Application,Baboon.Core
         //this.AppHost = host;
 
         //Ioc.Default.ConfigureServices(host.Services);
-        //await this.StartupAsync(new AppModuleStartupEventArgs(host));
+        //this.Startup(new AppModuleStartupEventArgs(host));
 
         //foreach (var appModule in moduleCatalog.GetAppModules())
         //{
-        //    await appModule.StartupAsync(this, new AppModuleStartupEventArgs(host));
+        //    appModule.Startup(this, new AppModuleStartupEventArgs(host));
         //}
 
-        //await host.StartAsync();
+        //host.StartAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 
         //var windowManager = this.ServiceProvider.GetRequiredService<IWindowManager>();
         //e.MainWindow = this.CreateMainWindow(windowManager);

@@ -98,8 +98,7 @@ public abstract class BaboonWpfApplication : Application, IApplication
     /// 初始化应用程序。
     /// </summary>
     /// <param name="e">初始化事件参数。</param>
-    /// <returns>异步任务。</returns>
-    protected abstract Task InitializeAsync(AppModuleInitEventArgs e);
+    protected abstract void Initialize(AppModuleInitEventArgs e);
 
     /// <summary>
     /// 在异常的时候
@@ -111,33 +110,32 @@ public abstract class BaboonWpfApplication : Application, IApplication
     }
 
     /// <inheritdoc/>
-    protected override async void OnExit(ExitEventArgs e)
+    protected override void OnExit(ExitEventArgs e)
     {
         var moduleCatalog = this.ServiceProvider.GetRequiredService<IModuleCatalog>();
         foreach (var appModule in moduleCatalog.GetAppModules())
         {
             appModule.SafeDispose();
         }
-        await this.AppHost.StopAsync();
+        _=this.AppHost.StopAsync();
         this.AppHost.Dispose();
         base.OnExit(e);
     }
 
     /// <inheritdoc/>
-    protected sealed override async void OnStartup(StartupEventArgs e)
+    protected sealed override void OnStartup(StartupEventArgs e)
     {
         MainThreadTaskFactory.Initialize();
 
         base.OnStartup(e);
-        await this.PrivateOnStartupAsync(e);
+        this.PrivateOnStartup(e);
     }
 
     /// <summary>
     /// 启动应用程序。
     /// </summary>
     /// <param name="e">启动事件参数。</param>
-    /// <returns>异步任务。</returns>
-    protected abstract Task StartupAsync(AppModuleStartupEventArgs e);
+    protected abstract void Startup(AppModuleStartupEventArgs e);
 
     private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
@@ -165,7 +163,7 @@ public abstract class BaboonWpfApplication : Application, IApplication
         }
     }
 
-    private async Task PrivateOnStartupAsync(StartupEventArgs e)
+    private void PrivateOnStartup(StartupEventArgs e)
     {
         var builder = this.CreateApplicationBuilder(e);
 
@@ -185,27 +183,27 @@ public abstract class BaboonWpfApplication : Application, IApplication
         builder.Services.AddWindowManager();
         builder.Services.AddRegionManager();
 
-        await this.InitializeAsync(new AppModuleInitEventArgs(e.Args, builder.Services));
+        this.Initialize(new AppModuleInitEventArgs(e.Args, builder.Services));
 
         #endregion 注册服务
 
         foreach (var appModule in moduleCatalog.GetAppModules())
         {
-            await appModule.InitializeAsync(this, new AppModuleInitEventArgs(e.Args, builder.Services));
+            appModule.Initialize(this, new AppModuleInitEventArgs(e.Args, builder.Services));
         }
 
         var host = builder.Build();
         this.AppHost = host;
 
         Ioc.Default.ConfigureServices(host.Services);
-        await this.StartupAsync(new AppModuleStartupEventArgs(host));
+        this.Startup(new AppModuleStartupEventArgs(host));
 
         foreach (var appModule in moduleCatalog.GetAppModules())
         {
-            await appModule.StartupAsync(this, new AppModuleStartupEventArgs(host));
+            appModule.Startup(this, new AppModuleStartupEventArgs(host));
         }
 
-        await host.StartAsync();
+        host.StartAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 
         var windowManager = this.ServiceProvider.GetRequiredService<IWindowManager>();
         this.MainWindow = this.CreateMainWindow(windowManager);

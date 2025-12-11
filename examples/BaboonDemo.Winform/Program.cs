@@ -40,11 +40,8 @@ internal static class Program
         //    return this.ServiceProvider.GetRequiredService<Form1>();
         //}
 
-        protected override Task InitializeAsync(AppModuleInitEventArgs e)
+        protected override void Initialize(AppModuleInitEventArgs e)
         {
-            //添加服务
-            //e.Services.AddSingleton<>();
-            return Task.CompletedTask;
         }
 
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
@@ -53,9 +50,8 @@ internal static class Program
             base.ConfigureModuleCatalog(moduleCatalog);
         }
 
-        protected override Task StartupAsync(AppModuleStartupEventArgs e)
+        protected override void Startup(AppModuleStartupEventArgs e)
         {
-            return Task.CompletedTask;
         }
     }
 }

@@ -21,15 +21,14 @@ public class BaboonCoreModule : AppModuleBase
 {
     public override ModuleDescription Description => ModuleDescription.FromAssembly(this.GetType().Assembly);
 
-    protected override Task OnInitializeAsync(IApplication application, AppModuleInitEventArgs e)
+    protected override void OnInitialize(IApplication application, AppModuleInitEventArgs e)
     {
         e.Services.AddSingleton<IMenuService, MenuService>();
         e.Services.AddSingleton<IMessenger, WeakReferenceMessenger>();
-        return Task.CompletedTask;
     }
 
-    protected override Task OnStartupAsync(IApplication application, AppModuleStartupEventArgs e)
+    protected override void OnStartup(IApplication application, AppModuleStartupEventArgs e)
     {
-        return Task.CompletedTask;
+       
     }
 }

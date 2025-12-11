@@ -19,6 +19,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 using TouchSocket.Core;
 
 namespace Baboon.Avalonia.Desktop;
@@ -40,10 +41,8 @@ public abstract class BaboonAvaloniaDesktopApplication : Application, IApplicati
         if (this.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.Exit += this.Desktop_Exit;
-            //desktop.MainWindow = new MainWindow();
 
-            //MainThreadTaskFactory.Initialize();
-            this.PrivateOnStartupAsync(desktop).GetAwaiter().GetResult();
+            this.PrivateOnStartup(desktop);
         }
 
         base.OnFrameworkInitializationCompleted();
@@ -95,8 +94,7 @@ public abstract class BaboonAvaloniaDesktopApplication : Application, IApplicati
     /// 初始化应用程序。
     /// </summary>
     /// <param name="e">初始化事件参数。</param>
-    /// <returns>异步任务。</returns>
-    protected abstract Task InitializeAsync(AppModuleInitEventArgs e);
+    protected abstract void Initialize(AppModuleInitEventArgs e);
 
     /// <summary>
     /// 在异常的时候
@@ -108,14 +106,14 @@ public abstract class BaboonAvaloniaDesktopApplication : Application, IApplicati
     }
 
     /// <inheritdoc/>
-    protected virtual async void OnExit(ControlledApplicationLifetimeExitEventArgs e)
+    protected virtual void OnExit(ControlledApplicationLifetimeExitEventArgs e)
     {
         var moduleCatalog = this.ServiceProvider.GetRequiredService<IModuleCatalog>();
         foreach (var appModule in moduleCatalog.GetAppModules())
         {
             appModule.SafeDispose();
         }
-        await this.AppHost.StopAsync().ConfigureFalseAwait();
+        _ = this.AppHost.StopAsync();
         this.AppHost.Dispose();
     }
 
@@ -124,11 +122,9 @@ public abstract class BaboonAvaloniaDesktopApplication : Application, IApplicati
     /// 启动应用程序。
     /// </summary>
     /// <param name="e">启动事件参数。</param>
-    /// <returns>异步任务。</returns>
-    protected abstract Task StartupAsync(AppModuleStartupEventArgs e);
+    protected abstract void Startup(AppModuleStartupEventArgs e);
 
-
-    private async Task PrivateOnStartupAsync(IClassicDesktopStyleApplicationLifetime e)
+    private void PrivateOnStartup(IClassicDesktopStyleApplicationLifetime e)
     {
         var builder = this.CreateApplicationBuilder(e);
 
@@ -148,27 +144,27 @@ public abstract class BaboonAvaloniaDesktopApplication : Application, IApplicati
         builder.Services.AddWindowManager();
 
 
-        await this.InitializeAsync(new AppModuleInitEventArgs(e.Args, builder.Services)).ConfigureFalseAwait();
+        this.Initialize(new AppModuleInitEventArgs(e.Args, builder.Services));
 
         #endregion 注册服务
 
         foreach (var appModule in moduleCatalog.GetAppModules())
         {
-            await appModule.InitializeAsync(this, new AppModuleInitEventArgs(e.Args, builder.Services)).ConfigureFalseAwait();
+            appModule.Initialize(this, new AppModuleInitEventArgs(e.Args, builder.Services));
         }
 
         var host = builder.Build();
         this.AppHost = host;
 
         Ioc.Default.ConfigureServices(host.Services);
-        await this.StartupAsync(new AppModuleStartupEventArgs(host));
+        this.Startup(new AppModuleStartupEventArgs(host));
 
         foreach (var appModule in moduleCatalog.GetAppModules())
         {
-            await appModule.StartupAsync(this, new AppModuleStartupEventArgs(host));
+            appModule.Startup(this, new AppModuleStartupEventArgs(host));
         }
 
-        await host.StartAsync();
+        _ = host.StartAsync();
 
         var windowManager = this.ServiceProvider.GetRequiredService<IWindowManager>();
         e.MainWindow = this.CreateMainWindow(windowManager);

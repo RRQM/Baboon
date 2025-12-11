@@ -30,15 +30,13 @@ public class SayHelloModule : AppModuleBase
 
     public override ModuleDescription Description { get; }
 
-    protected override Task OnInitializeAsync(IApplication application, AppModuleInitEventArgs e)
+    protected override void OnInitialize(IApplication application, AppModuleInitEventArgs e)
     {
         e.Services.AddHostedService<MyClass>();
-        return Task.CompletedTask;
     }
 
-    protected override async Task OnStartupAsync(IApplication application, AppModuleStartupEventArgs e)
+    protected override void OnStartup(IApplication application, AppModuleStartupEventArgs e)
     {
-        await Task.Delay(100).ConfigureAwait(false);
         var serviceProvider = this.ServiceProvider;
         var messenger = serviceProvider.GetRequiredService<IMessenger>();
         if (serviceProvider is not null)
@@ -62,8 +60,6 @@ public class SayHelloModule : AppModuleBase
 
             });
         }
-
-        await Task.CompletedTask;
     }
 }
 

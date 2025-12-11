@@ -42,7 +42,7 @@ public partial class App : BaboonWpfApplication
         return name.EndsWith("Module");
     }
 
-    protected override Task InitializeAsync(AppModuleInitEventArgs e)
+    protected override void Initialize(AppModuleInitEventArgs e)
     {
         //程序初始化时执行
         //可以在这里注册服务
@@ -51,7 +51,6 @@ public partial class App : BaboonWpfApplication
         e.Services.AddSingletonView<MainWindow, MainViewModel>();
 
         e.Services.AddSingletonNavigate<RegionControl, RegionControlViewModel>("RegionControl");
-        return Task.CompletedTask;
     }
 
     protected override void OnException(Exception ex)
@@ -61,11 +60,7 @@ public partial class App : BaboonWpfApplication
         MessageBox.Show($"异常：{ex.Message}");
     }
 
-    protected override Task StartupAsync(AppModuleStartupEventArgs e)
+    protected override void Startup(AppModuleStartupEventArgs e)
     {
-        //程序启动时执行
-        //可以在这里通过ServiceProvider获取服务
-        //this.ServiceProvider.Resolve<MainViewModel>();
-        return Task.CompletedTask;
     }
 }

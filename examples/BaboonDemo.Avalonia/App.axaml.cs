@@ -31,10 +31,9 @@ public partial class App : BaboonAvaloniaDesktopApplication
         return windowManager.GetWindow<MainWindow>();
     }
 
-    protected override Task InitializeAsync(AppModuleInitEventArgs e)
+    protected override void Initialize(AppModuleInitEventArgs e)
     {
         e.Services.AddSingletonView<MainWindow, MainViewModel>();
-        return Task.CompletedTask;
     }
 
     protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
@@ -43,8 +42,7 @@ public partial class App : BaboonAvaloniaDesktopApplication
         base.ConfigureModuleCatalog(moduleCatalog);
     }
 
-    protected override Task StartupAsync(AppModuleStartupEventArgs e)
+    protected override void Startup(AppModuleStartupEventArgs e)
     {
-        return Task.CompletedTask;
     }
 }

@@ -11,7 +11,6 @@
 // ------------------------------------------------------------------------------
 
 using System;
-using System.Threading.Tasks;
 
 namespace Baboon.Core;
 
@@ -26,12 +25,11 @@ public interface IAppModule : IDisposable
     ModuleDescription Description { get; }
 
     /// <summary>
-    /// 异步初始化模块
+    /// 初始化模块
     /// </summary>
     /// <param name="application">应用程序实例</param>
     /// <param name="e">初始化事件参数</param>
-    /// <returns>表示异步操作的任务</returns>
-    Task InitializeAsync(IApplication application, AppModuleInitEventArgs e);
+    void Initialize(IApplication application, AppModuleInitEventArgs e);
 
     /// <summary>
     /// 获取服务提供者
@@ -39,10 +37,9 @@ public interface IAppModule : IDisposable
     IServiceProvider ServiceProvider { get; }
 
     /// <summary>
-    /// 异步启动模块
+    /// 启动模块
     /// </summary>
     /// <param name="application">应用程序实例</param>
     /// <param name="e">启动事件参数</param>
-    /// <returns>表示异步操作的任务</returns>
-    Task StartupAsync(IApplication application, AppModuleStartupEventArgs e);
+    void Startup(IApplication application, AppModuleStartupEventArgs e);
 }
