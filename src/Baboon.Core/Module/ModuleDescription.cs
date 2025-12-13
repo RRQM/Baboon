@@ -42,7 +42,7 @@ public class ModuleDescription
     /// </summary>
     public ModuleDescription()
     {
-        
+
     }
 
     /// <summary>
@@ -93,5 +93,10 @@ public class ModuleDescription
         var description = assembly.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description;
 
         return new ModuleDescription(id, name, version, authors, description);
+    }
+
+    public static ModuleDescription FromAssembly<T>()
+    {
+        return FromAssembly(typeof(T).Assembly);
     }
 }

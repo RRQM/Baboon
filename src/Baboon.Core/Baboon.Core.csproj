@@ -6,6 +6,6 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-		<PackageReference Include="TouchSocket.Core" Version="4.0.2.2" />
+		<PackageReference Include="TouchSocket.Core" Version="4.0.3" />
 	</ItemGroup>
 </Project>
