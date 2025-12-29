@@ -6,8 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Avalonia" Version="11.3.9" />
-		<PackageReference Include="Avalonia.Desktop" Version="11.3.9" />
+		<PackageReference Include="Avalonia" Version="11.3.10" />
+		<PackageReference Include="Avalonia.Desktop" Version="11.3.10" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\Baboon.Core\Baboon.Core.csproj" />
