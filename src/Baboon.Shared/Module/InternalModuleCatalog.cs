@@ -20,16 +20,16 @@ internal class InternalModuleCatalog : IModuleCatalog
 {
     public InternalModuleCatalog(Func<string, bool> findModuleFunc)
     {
-        this.findModuleFunc = findModuleFunc;
+        this.m_findModuleFunc = findModuleFunc;
     }
-    private readonly List<Type> appModuleTypes = new List<Type>();
+    private readonly List<Type> m_appModuleTypes = new List<Type>();
     private readonly object m_locker = new object();
     private readonly Dictionary<string, IAppModule> m_modules = new Dictionary<string, IAppModule>();
-    private volatile bool isReadonly;
-    private readonly Func<string, bool> findModuleFunc;
+    private volatile bool m_isReadonly;
+    private readonly Func<string, bool> m_findModuleFunc;
 
     /// <inheritdoc/>
-    public bool IsReadonly => this.isReadonly;
+    public bool IsReadonly => this.m_isReadonly;
 
     /// <inheritdoc/>
     public string ModulesDirPath { get; set; } = Path.GetFullPath("Modules");
@@ -51,7 +51,7 @@ internal class InternalModuleCatalog : IModuleCatalog
                 throw new Exception($"模块类型必须继承{nameof(IAppModule)}");
             }
 
-            if (this.appModuleTypes.Contains(moduleType))
+            if (this.m_appModuleTypes.Contains(moduleType))
             {
                 return;
             }
@@ -64,7 +64,7 @@ internal class InternalModuleCatalog : IModuleCatalog
                 }
             }
 
-            this.appModuleTypes.Add(moduleType);
+            this.m_appModuleTypes.Add(moduleType);
         }
 
     }
@@ -98,7 +98,7 @@ internal class InternalModuleCatalog : IModuleCatalog
             {
                 foreach (var path in Directory.GetFiles(this.ModulesDirPath, "*.dll", SearchOption.AllDirectories))
                 {
-                    if (!this.findModuleFunc.Invoke(path))
+                    if (!this.m_findModuleFunc.Invoke(path))
                     {
                         continue;
                     }
@@ -120,7 +120,7 @@ internal class InternalModuleCatalog : IModuleCatalog
                 }
             }
 
-            foreach (var moduleType in this.appModuleTypes)
+            foreach (var moduleType in this.m_appModuleTypes)
             {
                 var module = (IAppModule)Activator.CreateInstance(moduleType);
                 this.Add(module);
@@ -160,12 +160,12 @@ internal class InternalModuleCatalog : IModuleCatalog
     /// <inheritdoc/>
     public void MakeReadonly()
     {
-        this.isReadonly = true;
+        this.m_isReadonly = true;
     }
 
     private void ThrowIfReadonly()
     {
-        if (this.isReadonly)
+        if (this.m_isReadonly)
         {
             throw new Exception("The module catalog has been built, so it is not allowed to modify the collection content anymore.");
         }
