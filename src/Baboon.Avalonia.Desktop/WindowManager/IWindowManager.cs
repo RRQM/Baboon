@@ -11,12 +11,13 @@
 // ------------------------------------------------------------------------------
 
 using Avalonia.Controls;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Baboon.Avalonia.Desktop;
 
 public interface IWindowManager
 {
-    TWindow GetWindow<TWindow>(object? token = null) where TWindow : Window;
-    void Show<TWindow>(object? token = null) where TWindow : Window;
-    Task<TResult> ShowDialog<TWindow, TResult>(Window owner, object? token = default) where TWindow : Window;
+    TWindow GetWindow<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TWindow>(object? token = null) where TWindow : Window;
+    void Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TWindow>(object? token = null) where TWindow : Window;
+    Task<TResult> ShowDialog<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TWindow, TResult>(Window owner, object? token = default) where TWindow : Window;
 }

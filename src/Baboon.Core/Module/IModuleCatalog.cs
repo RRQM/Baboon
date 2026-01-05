@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Baboon.Core;
 
@@ -34,7 +35,7 @@ public interface IModuleCatalog
     /// 以类型直接添加模块
     /// </summary>
     /// <param name="moduleType">模块类型</param>
-    void Add(Type moduleType);
+    void Add([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type moduleType);
 
     /// <summary>
     /// 直接添加模块
@@ -46,7 +47,7 @@ public interface IModuleCatalog
     /// 泛型添加模块
     /// </summary>
     /// <typeparam name="TAppModule">应用模块类型</typeparam>
-    void Add<TAppModule>() where TAppModule : IAppModule, new();
+    void Add<[DynamicallyAccessedMembers( DynamicallyAccessedMemberTypes.PublicConstructors)]TAppModule>() where TAppModule : IAppModule, new();
 
     /// <summary>
     /// 构建模块

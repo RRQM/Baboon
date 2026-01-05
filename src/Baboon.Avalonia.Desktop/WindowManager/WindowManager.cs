@@ -13,6 +13,7 @@
 using Avalonia.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Baboon.Avalonia.Desktop;
 
@@ -25,7 +26,7 @@ internal class WindowManager : IWindowManager
     {
         this.m_serviceProvider = serviceProvider;
     }
-    public TWindow GetWindow<TWindow>(object? token = default) where TWindow : Window
+    public TWindow GetWindow<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TWindow>(object? token = default) where TWindow : Window
     {
         if (token == default)
         {
@@ -47,13 +48,13 @@ internal class WindowManager : IWindowManager
         }
     }
 
-    public void Show<TWindow>(object? token = default) where TWindow : Window
+    public void Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TWindow>(object? token = default) where TWindow : Window
     {
         var Window = this.GetWindow<TWindow>(token);
         Window.Show();
     }
 
-    public async Task<TResult> ShowDialog<TWindow, TResult>(Window owner, object? token = default) where TWindow : Window
+    public async Task<TResult> ShowDialog<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TWindow, TResult>(Window owner, object? token = default) where TWindow : Window
     {
         var Window = this.GetWindow<TWindow>(token);
         return await Window.ShowDialog<TResult>(owner);

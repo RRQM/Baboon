@@ -11,8 +11,10 @@
 // ------------------------------------------------------------------------------
 
 using Baboon.Core;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using TouchSocket.Core;
+using System.Threading;
 
 namespace Baboon.Desktop;
 
@@ -35,13 +37,13 @@ internal class InternalModuleCatalog : IModuleCatalog
     public string ModulesDirPath { get; set; } = Path.GetFullPath("Modules");
 
     /// <inheritdoc/>
-    public void Add<TAppModule>() where TAppModule : IAppModule, new()
+    public void Add<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TAppModule>() where TAppModule : IAppModule, new()
     {
         this.Add(typeof(TAppModule));
     }
 
     /// <inheritdoc/>
-    public void Add(Type moduleType)
+    public void Add([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type moduleType)
     {
         lock (this.m_locker)
         {
@@ -88,41 +90,47 @@ internal class InternalModuleCatalog : IModuleCatalog
     }
 
     /// <inheritdoc/>
+    [UnconditionalSuppressMessage("Trimming", "IL2026")]
+    [UnconditionalSuppressMessage("Trimming", "IL2072")]
     public void Build()
     {
         lock (this.m_locker)
         {
             this.ThrowIfReadonly();
 
-            if (this.ModulesDirPath.HasValue() && Directory.Exists(this.ModulesDirPath))
+            if (GlobalEnvironment.IsDynamicCodeSupported)
             {
-                foreach (var path in Directory.GetFiles(this.ModulesDirPath, "*.dll", SearchOption.AllDirectories))
+                if (this.ModulesDirPath.HasValue() && Directory.Exists(this.ModulesDirPath))
                 {
-                    if (!this.m_findModuleFunc.Invoke(path))
+                    foreach (var path in Directory.GetFiles(this.ModulesDirPath, "*.dll", SearchOption.AllDirectories))
                     {
-                        continue;
-                    }
-                    var assembly = Assembly.LoadFrom(Path.GetFullPath(path));
-
-                    var moduleTypes = assembly.ExportedTypes;
-
-                    foreach (var moduleType in moduleTypes)
-                    {
-                        if (moduleType.IsAbstract || moduleType.IsInterface || moduleType.IsNotPublic)
+                        if (!this.m_findModuleFunc.Invoke(path))
                         {
                             continue;
                         }
-                        if (typeof(IAppModule).IsAssignableFrom(moduleType))
+                        var assembly = Assembly.LoadFrom(Path.GetFullPath(path));
+
+                        var moduleTypes = assembly.ExportedTypes;
+
+                        foreach (var moduleType in moduleTypes)
                         {
-                            this.Add(moduleType);
+                            if (moduleType.IsAbstract || moduleType.IsInterface || moduleType.IsNotPublic)
+                            {
+                                continue;
+                            }
+                            if (typeof(IAppModule).IsAssignableFrom(moduleType))
+                            {
+                                this.Add(moduleType);
+                            }
                         }
                     }
                 }
+
             }
 
             foreach (var moduleType in this.m_appModuleTypes)
             {
-                var module = (IAppModule)Activator.CreateInstance(moduleType);
+                var module = Activator.CreateInstance(moduleType) as IAppModule ?? throw new Exception($"Create {moduleType} is null.");
                 this.Add(module);
             }
 

@@ -12,6 +12,7 @@
 
 using Avalonia;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Baboon.Avalonia.Desktop;
 
@@ -26,7 +27,7 @@ public static class IServiceCollectionExtension
     /// <typeparam name="TView">视图的类型。</typeparam>
     /// <typeparam name="TViewModel">视图模型的类型。</typeparam>
     /// <param name="services">服务集合。</param>
-    public static void AddSingletonView<TView, TViewModel>(this IServiceCollection services)
+    public static void AddSingletonView<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TView, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TViewModel>(this IServiceCollection services)
                          where TView : StyledElement
     {
         AddSingletonView(services, typeof(TView), typeof(TViewModel));
@@ -38,7 +39,7 @@ public static class IServiceCollectionExtension
     /// <param name="services">服务集合。</param>
     /// <param name="viewType">视图的类型。</param>
     /// <param name="viewModelType">视图模型的类型。</param>
-    public static void AddSingletonView(this IServiceCollection services, Type viewType, Type viewModelType)
+    public static void AddSingletonView(this IServiceCollection services, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type viewType, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type viewModelType)
     {
         if (!typeof(StyledElement).IsAssignableFrom(viewType))
         {
@@ -67,7 +68,7 @@ public static class IServiceCollectionExtension
     /// <typeparam name="TView">视图的类型。</typeparam>
     /// <typeparam name="TViewModel">视图模型的类型。</typeparam>
     /// <param name="services">服务集合。</param>
-    public static void AddTransientView<TView, TViewModel>(this IServiceCollection services)
+    public static void AddTransientView<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TView, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TViewModel>(this IServiceCollection services)
                  where TView : StyledElement
     {
         AddTransientView(services, typeof(TView), typeof(TViewModel));
@@ -79,7 +80,7 @@ public static class IServiceCollectionExtension
     /// <param name="services">服务集合。</param>
     /// <param name="viewType">视图的类型。</param>
     /// <param name="viewModelType">视图模型的类型。</param>
-    public static void AddTransientView(this IServiceCollection services, Type viewType, Type viewModelType)
+    public static void AddTransientView(this IServiceCollection services, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type viewType, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type viewModelType)
     {
         if (!typeof(StyledElement).IsAssignableFrom(viewType))
         {

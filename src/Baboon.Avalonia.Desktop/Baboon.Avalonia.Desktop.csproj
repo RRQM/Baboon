@@ -1,16 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>net9.0;net10.0</TargetFrameworks>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net9.0;net10.0</TargetFrameworks>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IsAotCompatible>true</IsAotCompatible>
+	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Avalonia" Version="11.3.10" />
 		<PackageReference Include="Avalonia.Desktop" Version="11.3.10" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\Baboon.Core\Baboon.Core.csproj" />
+		<ProjectReference Include="..\Baboon.Core\Baboon.Core.csproj" />
 	</ItemGroup>
 	<Import Project="..\Baboon.Shared\Baboon.Shared.projitems" Label="Shared" />
 </Project>
