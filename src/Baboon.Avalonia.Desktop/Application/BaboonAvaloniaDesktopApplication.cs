@@ -45,6 +45,12 @@ public abstract class BaboonAvaloniaDesktopApplication : Application, IApplicati
             this.PrivateOnStartup(desktop);
         }
 
+        Dispatcher.UnhandledException += (s, e) =>
+           {
+               this.OnException(e.Exception);
+               e.Handled = true;
+           };
+
         base.OnFrameworkInitializationCompleted();
     }
 
